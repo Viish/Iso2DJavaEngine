@@ -1,0 +1,12 @@
+Version : 0.1
+Date : 2012-03-25
+Author : Sylvain "Viish" Berfini
+License : GPL v3
+
+v0.2 TODO List :
+* Better Sprites' animations
+* Be able to highligth a sprite using an Image mask
+* Create a listener for the map to have a callback when we click a Sprite
+* Be able to rotate the map
+* Center the map at the launch time
+* Resize the window to the good size
