@@ -26,6 +26,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +46,9 @@ import com.viish.apis.iso2djavaengine.Map;
 import com.viish.apis.iso2djavaengine.Orientation;
 import com.viish.apis.iso2djavaengine.Sprite;
 import com.viish.apis.iso2djavaengine.SpriteType;
-import com.viish.apis.iso2djavaengine.wrappers.AWTGraphicsWrapper;
-import com.viish.apis.iso2djavaengine.wrappers.AWTImageWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.awt.AWTGraphicsWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.awt.AWTImageWrapper;
 
 
 public class ExempleMain
@@ -55,7 +58,7 @@ public class ExempleMain
 
 	public ExempleMain()
 	{
-		JFrame window = new JFrame();
+		final JFrame window = new JFrame();
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setSize(1400, 1000);
 		JPanel pane = new JPanel();
@@ -113,11 +116,11 @@ public class ExempleMain
 	}
 }
 
-class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener
+class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener, MouseWheelListener
 {
 	private static final long	serialVersionUID	= 1L;
 	private Map					map;
-	private int					offsetX				= 500, offsetY = 0;
+	private int					offsetX				= 0, offsetY = 0;
 	private int					tempX, tempY;
 	public Sprite				axel;
 
@@ -125,14 +128,16 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener
 	{
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		addMouseListener(this);
 
 		int sizeX = 9;
 		int sizeY = 13;
 		map = new Map(sizeX, sizeY);
 		AWTImageWrapper img = new AWTImageWrapper(ImageIO.read(this
-				.getClass().getResource("images/tile.png")));
+				.getClass().getResource("images/tile3.png")));
 		AWTImageWrapper img2 = new AWTImageWrapper(ImageIO.read(this
-				.getClass().getResource("images/tile2.png")));
+				.getClass().getResource("images/tile3.png")));
+		map.setCellBordureHeight(0); // 11
 
 		Random r = new Random();
 		for (int i = 0; i < sizeX; i++)
@@ -140,7 +145,7 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener
 			for (int j = 0; j < sizeY; j++)
 			{
 				Sprite cell = new Sprite(SpriteType.CELL);
-				List<AWTImageWrapper> anim = new ArrayList<AWTImageWrapper>();
+				List<ImageWrapper> anim = new ArrayList<ImageWrapper>();
 				if (r.nextBoolean())
 					anim.add(img);
 				else
@@ -153,7 +158,7 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener
 		}
 
 		axel = new ExempleSprite(this.getClass(), "images/axel");
-		map.setCaracterSprite(7, 11, axel);
+		map.setCharacterSprite(7, 11, axel);
 
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask()
@@ -175,6 +180,14 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener
 		super.paint(g);
 		map.refresh(new AWTGraphicsWrapper((Graphics2D) g), offsetX, offsetY);
 	}
+	
+	public int getMapWidth() {
+		return map.getWidth();
+	}
+	
+	public int getMapHeight() {
+		return map.getHeight();
+	}
 
 	public void mouseDragged(MouseEvent me)
 	{
@@ -190,6 +203,14 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener
 		tempY = e.getY();
 	}
 
+	public void mouseWheelMoved(MouseWheelEvent e)
+	{
+		if (e.getWheelRotation() > 0)
+			map.zoomIn();
+		else
+			map.zoomOut();
+	}
+
 	public void mouseMoved(MouseEvent me)
 	{
 
@@ -197,7 +218,8 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener
 
 	public void mouseClicked(MouseEvent e)
 	{
-
+		System.out.println("e.getX=" + e.getX() + ", e.getY=" + e.getY());
+		map.getMapSpriteAt(e.getX(), e.getY());
 	}
 
 	public void mouseEntered(MouseEvent e)
@@ -211,5 +233,7 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener
 	}
 
 	public void mouseReleased(MouseEvent e)
-	{}
+	{
+		
+	}
 }

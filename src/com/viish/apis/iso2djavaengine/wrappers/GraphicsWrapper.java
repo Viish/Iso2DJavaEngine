@@ -16,9 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.viish.apis.iso2djavaengine;
+package com.viish.apis.iso2djavaengine.wrappers;
 
-public enum SpriteType
+
+public interface GraphicsWrapper
 {
-	CELL, CHARACTER;
+	public void drawImage(ImageWrapper imageWrapper, int x, int y);
+	public void drawText(String text, int x, int y);
+	
+	public void scale(double sx, double sy);
 }

@@ -16,11 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.viish.apis.iso2djavaengine.wrappers;
+package com.viish.apis.iso2djavaengine.wrappers.awt;
 
 import java.awt.Image;
 
-public class AWTImageWrapper
+import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
+
+public class AWTImageWrapper implements ImageWrapper
 {
 	private Image	image;
 

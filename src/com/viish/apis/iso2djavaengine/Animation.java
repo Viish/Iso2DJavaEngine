@@ -20,16 +20,16 @@ package com.viish.apis.iso2djavaengine;
 
 import java.util.List;
 
-import com.viish.apis.iso2djavaengine.wrappers.AWTImageWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 
 
 public class Animation
 {
-	private List<AWTImageWrapper>	images;
+	private List<ImageWrapper>	images;
 	private AnimationType			type;
 	private Orientation				orientation;
 
-	public Animation(AnimationType aType, List<AWTImageWrapper> imgList,
+	public Animation(AnimationType aType, List<ImageWrapper> imgList,
 			Orientation orient)
 	{
 		type = aType;
@@ -47,7 +47,7 @@ public class Animation
 		return type;
 	}
 
-	public AWTImageWrapper getImage(int n)
+	public ImageWrapper getImage(int n)
 	{
 		return images.get(n);
 	}

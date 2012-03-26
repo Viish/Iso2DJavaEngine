@@ -16,11 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.viish.apis.iso2djavaengine.wrappers;
+package com.viish.apis.iso2djavaengine.wrappers.awt;
 
 import java.awt.Graphics2D;
 
-public class AWTGraphicsWrapper
+import com.viish.apis.iso2djavaengine.wrappers.GraphicsWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
+
+public class AWTGraphicsWrapper implements GraphicsWrapper
 {
 	private Graphics2D	graphics;
 
@@ -29,8 +32,17 @@ public class AWTGraphicsWrapper
 		graphics = g2d;
 	}
 
-	public void drawImage(AWTImageWrapper img, int x, int y)
+	public void drawImage(ImageWrapper img, int x, int y)
 	{
 		graphics.drawImage(img.getRawImage(), x, y, null);
+	}
+	
+	public void scale(double sx, double sy) {
+		graphics.scale(sx, sy);
+	}
+
+	public void drawText(String text, int x, int y)
+	{
+		graphics.drawString(text, x, y);
 	}
 }

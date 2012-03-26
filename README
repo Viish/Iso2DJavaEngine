@@ -1,12 +1,24 @@
-Version : 0.1
-Date : 2012-03-25
+Version : 0.2_SNAPSHOT
+Date : 2012-03-27
 Author : Sylvain "Viish" Berfini
 License : GPL v3
+Repository = https://github.com/Viish/Iso2DJavaEngine
+
+v0.1 Features (2012-03-25) :
+* Draw Sprites in layouts
+* Predefined layouts for map or characters
+* Animate Sprites
+* Move Sprites
+* Rotate Sprites
+
+v0.2_SNAPSHOT Features (2012-03-27) :
+* Better Wrapper API
+* More functions to the API
+* Draws the map starting at 0,0 (bugfix)
+* Be able to click on a Sprite and know which one has been clicked (started)
+* Zoom/UnZoom the map (started)
 
 v0.2 TODO List :
 * Better Sprites' animations
 * Be able to highligth a sprite using an Image mask
-* Create a listener for the map to have a callback when we click a Sprite
 * Be able to rotate the map
-* Center the map at the launch time
-* Resize the window to the good size

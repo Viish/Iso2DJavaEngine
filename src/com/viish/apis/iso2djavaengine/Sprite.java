@@ -1,28 +1,27 @@
- /**
-    Iso2DJavaEngine  
-    Copyright (C) 2012 Sylvain "Viish" Berfini
+/**
+   Iso2DJavaEngine  
+   Copyright (C) 2012 Sylvain "Viish" Berfini
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package com.viish.apis.iso2djavaengine;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.viish.apis.iso2djavaengine.wrappers.AWTImageWrapper;
-
+import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 
 public class Sprite
 {
@@ -50,7 +49,7 @@ public class Sprite
 	 * Use one or more pictures to create a Sprite animation for the given
 	 * action and orientation
 	 */
-	public void addAnimation(AnimationType type, List<AWTImageWrapper> images,
+	public void addAnimation(AnimationType type, List<ImageWrapper> images,
 			Orientation orientation)
 	{
 		Animation anim = new Animation(type, images, orientation);
@@ -63,7 +62,7 @@ public class Sprite
 	/**
 	 * @return the currently displayed image for the current Sprite's animation
 	 */
-	public AWTImageWrapper getCurrentAnimationImage()
+	public ImageWrapper getCurrentAnimationImage()
 	{
 		return currentAnimation.getImage(animationCounter);
 	}
@@ -72,11 +71,10 @@ public class Sprite
 	 * @return the next image for the current Sprite's animation. If last image
 	 *         reached, return the first one.
 	 */
-	public AWTImageWrapper getNextAnimationImage()
+	public ImageWrapper getNextAnimationImage()
 	{
 		int currentAnimationSize = currentAnimation.getSize();
-		AWTImageWrapper nextImage = currentAnimation
-				.getImage(animationCounter);
+		ImageWrapper nextImage = currentAnimation.getImage(animationCounter);
 
 		if (animationCounter == currentAnimationSize - 1)
 			animationCounter = 0;
@@ -137,5 +135,21 @@ public class Sprite
 	public String getOrientation()
 	{
 		return currentOrientation.toString();
+	}
+
+	/**
+	 * @return the width of the current animation image
+	 */
+	public int getWidth()
+	{
+		return getCurrentAnimationImage().getWidth();
+	}
+
+	/**
+	 * @return the height of the current animation image
+	 */
+	public int getHeight()
+	{
+		return getCurrentAnimationImage().getHeight();
 	}
 }

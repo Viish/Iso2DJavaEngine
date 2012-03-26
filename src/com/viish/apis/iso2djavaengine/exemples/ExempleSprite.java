@@ -28,18 +28,19 @@ import com.viish.apis.iso2djavaengine.AnimationType;
 import com.viish.apis.iso2djavaengine.Orientation;
 import com.viish.apis.iso2djavaengine.Sprite;
 import com.viish.apis.iso2djavaengine.SpriteType;
-import com.viish.apis.iso2djavaengine.wrappers.AWTImageWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.awt.AWTImageWrapper;
 
 
 public class ExempleSprite extends Sprite
 {
 	public ExempleSprite(Class<?> classe, String path) throws IOException
 	{
-		super(SpriteType.CARACTER);
+		super(SpriteType.CHARACTER);
 		if (!path.endsWith("/"))
 			path += "/";
 		
-		List<AWTImageWrapper> axelStandNE = new ArrayList<AWTImageWrapper>();
+		List<ImageWrapper> axelStandNE = new ArrayList<ImageWrapper>();
 		axelStandNE.add(new AWTImageWrapper(ImageIO.read(classe
 				.getResource(path + "NE/stand_0.png"))));
 		axelStandNE.add(new AWTImageWrapper(ImageIO.read(classe
@@ -48,7 +49,7 @@ public class ExempleSprite extends Sprite
 				.getResource(path + "NE/stand_2.png"))));
 		addAnimation(AnimationType.IDLE, axelStandNE, Orientation.NORTH_EAST);
 
-		List<AWTImageWrapper> axelStandNW = new ArrayList<AWTImageWrapper>();
+		List<ImageWrapper> axelStandNW = new ArrayList<ImageWrapper>();
 		axelStandNW.add(new AWTImageWrapper(ImageIO.read(classe
 				.getResource(path + "NW/stand_0.png"))));
 		axelStandNW.add(new AWTImageWrapper(ImageIO.read(classe
@@ -57,7 +58,7 @@ public class ExempleSprite extends Sprite
 				.getResource(path + "NW/stand_2.png"))));
 		addAnimation(AnimationType.IDLE, axelStandNW, Orientation.NORTH_WEST);
 
-		List<AWTImageWrapper> axelStandSE = new ArrayList<AWTImageWrapper>();
+		List<ImageWrapper> axelStandSE = new ArrayList<ImageWrapper>();
 		axelStandSE.add(new AWTImageWrapper(ImageIO.read(classe
 				.getResource(path + "SE/stand_0.png"))));
 		axelStandSE.add(new AWTImageWrapper(ImageIO.read(classe
@@ -66,7 +67,7 @@ public class ExempleSprite extends Sprite
 				.getResource(path + "SE/stand_2.png"))));
 		addAnimation(AnimationType.IDLE, axelStandSE, Orientation.SOUTH_EAST);
 
-		List<AWTImageWrapper> axelStandSW = new ArrayList<AWTImageWrapper>();
+		List<ImageWrapper> axelStandSW = new ArrayList<ImageWrapper>();
 		axelStandSW.add(new AWTImageWrapper(ImageIO.read(classe
 				.getResource(path + "SW/stand_0.png"))));
 		axelStandSW.add(new AWTImageWrapper(ImageIO.read(classe
@@ -75,7 +76,7 @@ public class ExempleSprite extends Sprite
 				.getResource(path + "SW/stand_2.png"))));
 		addAnimation(AnimationType.IDLE, axelStandSW, Orientation.SOUTH_WEST);
 
-		List<AWTImageWrapper> axelWalkSW = new ArrayList<AWTImageWrapper>();
+		List<ImageWrapper> axelWalkSW = new ArrayList<ImageWrapper>();
 		axelWalkSW.add(new AWTImageWrapper(ImageIO.read(classe
 				.getResource(path + "SW/walk_0.png"))));
 		axelWalkSW.add(new AWTImageWrapper(ImageIO.read(classe
