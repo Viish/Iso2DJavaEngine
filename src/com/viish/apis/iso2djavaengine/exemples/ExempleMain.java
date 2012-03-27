@@ -1,26 +1,27 @@
- /**
-    Iso2DJavaEngine  
-    Copyright (C) 2012 Sylvain "Viish" Berfini
+/**
+   Iso2DJavaEngine  
+   Copyright (C) 2012 Sylvain "Viish" Berfini
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package com.viish.apis.iso2djavaengine.exemples;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -34,22 +35,21 @@ import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
 import com.viish.apis.iso2djavaengine.AnimationType;
 import com.viish.apis.iso2djavaengine.Map;
 import com.viish.apis.iso2djavaengine.Orientation;
 import com.viish.apis.iso2djavaengine.Sprite;
 import com.viish.apis.iso2djavaengine.SpriteType;
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.Wrappers;
 import com.viish.apis.iso2djavaengine.wrappers.awt.AWTGraphicsWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.awt.AWTImageWrapper;
-
 
 public class ExempleMain
 {
@@ -60,7 +60,7 @@ public class ExempleMain
 	{
 		final JFrame window = new JFrame();
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setSize(1400, 1000);
+		window.setSize(850, 550);
 		JPanel pane = new JPanel();
 		try
 		{
@@ -92,8 +92,12 @@ public class ExempleMain
 			});
 			pane.setLayout(new BorderLayout());
 			pane.add(monPanel, BorderLayout.CENTER);
-			pane.add(rotate, BorderLayout.SOUTH);
-			pane.add(walk, BorderLayout.NORTH);
+			JComponent controls = new JPanel();
+			BorderLayout controlsLayout = new BorderLayout();
+			controls.setLayout(controlsLayout);
+			controls.add(rotate, BorderLayout.EAST);
+			controls.add(walk, BorderLayout.WEST);
+//			pane.add(controls, BorderLayout.SOUTH);
 
 			window.setContentPane(pane);
 		}
@@ -116,7 +120,8 @@ public class ExempleMain
 	}
 }
 
-class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener, MouseWheelListener
+class ExemplePanel extends JPanel implements MouseMotionListener,
+		MouseListener, MouseWheelListener
 {
 	private static final long	serialVersionUID	= 1L;
 	private Map					map;
@@ -128,17 +133,19 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener,
 	{
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		addMouseListener(this);
+		addMouseWheelListener(this);
 
 		int sizeX = 9;
 		int sizeY = 13;
-		map = new Map(sizeX, sizeY);
-		AWTImageWrapper img = new AWTImageWrapper(ImageIO.read(this
-				.getClass().getResource("images/tile3.png")));
-		AWTImageWrapper img2 = new AWTImageWrapper(ImageIO.read(this
-				.getClass().getResource("images/tile3.png")));
+		map = new Map(sizeX, sizeY, Wrappers.AWT);
+		ImageWrapper img = new AWTImageWrapper(ImageIO.read(this.getClass()
+				.getResource("images/tile3_small.png")));
+		ImageWrapper img2 = new AWTImageWrapper(ImageIO.read(this.getClass()
+				.getResource("images/tile3_small.png")));
 		map.setCellBordureHeight(0); // 11
 
+		Sprite vyers = new ExempleSprite2(this.getClass(), "images/vyers/");
+		
 		Random r = new Random();
 		for (int i = 0; i < sizeX; i++)
 		{
@@ -154,11 +161,15 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener,
 						Orientation.NORTH_EAST);
 				cell.setCurrentAnimation(AnimationType.IDLE);
 				map.setMapSprite(i, j, cell);
+				
+				if (r.nextInt(3) % 3 == 0)
+					map.setCharacterSprite(i, j, vyers);
 			}
 		}
 
-		axel = new ExempleSprite(this.getClass(), "images/axel");
-		map.setCharacterSprite(7, 11, axel);
+//		axel = new ExempleSprite(this.getClass(), "images/axel");
+//		map.setCharacterSprite(7, 11, axel);
+		
 
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask()
@@ -178,14 +189,20 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener,
 	public void paint(Graphics g)
 	{
 		super.paint(g);
+
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        
 		map.refresh(new AWTGraphicsWrapper((Graphics2D) g), offsetX, offsetY);
 	}
-	
-	public int getMapWidth() {
+
+	public int getMapWidth()
+	{
 		return map.getWidth();
 	}
-	
-	public int getMapHeight() {
+
+	public int getMapHeight()
+	{
 		return map.getHeight();
 	}
 
@@ -206,9 +223,9 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener,
 	public void mouseWheelMoved(MouseWheelEvent e)
 	{
 		if (e.getWheelRotation() > 0)
-			map.zoomIn();
-		else
 			map.zoomOut();
+		else
+			map.zoomIn();
 	}
 
 	public void mouseMoved(MouseEvent me)
@@ -218,8 +235,23 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener,
 
 	public void mouseClicked(MouseEvent e)
 	{
-		System.out.println("e.getX=" + e.getX() + ", e.getY=" + e.getY());
-		map.getMapSpriteAt(e.getX(), e.getY());
+		Sprite s = map.getHighestSpriteAt(e.getX(), e.getY());
+		if (s == null)
+		{
+			System.out.println("No sprite found");
+		}
+		else if (s.getType() == SpriteType.CHARACTER)
+		{
+			System.out.println("Character found : " + s.getLinkedObject());
+		}
+		else if (s.getType() == SpriteType.CELL)
+		{
+			System.out.println("Map found");
+		}
+		else if (s.getType() == SpriteType.CELL)
+		{
+			System.out.println("Sprite found");
+		}
 	}
 
 	public void mouseEntered(MouseEvent e)
@@ -234,6 +266,6 @@ class ExemplePanel extends JPanel implements MouseMotionListener, MouseListener,
 
 	public void mouseReleased(MouseEvent e)
 	{
-		
+
 	}
 }

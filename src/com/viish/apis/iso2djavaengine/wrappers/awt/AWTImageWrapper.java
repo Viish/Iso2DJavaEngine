@@ -25,7 +25,7 @@ import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 public class AWTImageWrapper implements ImageWrapper
 {
 	private Image	image;
-
+	
 	public AWTImageWrapper(Image img)
 	{
 		image = img;

@@ -20,7 +20,6 @@ package com.viish.apis.iso2djavaengine;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 
 public class Sprite
@@ -29,12 +28,34 @@ public class Sprite
 	private List<Animation>	animations;
 	private Animation		currentAnimation;
 	private Orientation		currentOrientation;
-	private SpriteType		type;
+	private SpriteType		type	= SpriteType.UNDEFINED;
+	private Object			linkedObject;
 
-	public Sprite(SpriteType type)
+	public Sprite()
 	{
 		animations = new ArrayList<Animation>();
 		animationCounter = 0;
+		type = SpriteType.UNDEFINED;
+		linkedObject = null;
+	}
+
+	public Sprite(SpriteType t)
+	{
+		this();
+		type = t;
+	}
+
+	public Sprite(Object object)
+	{
+		this();
+		linkedObject = object;
+	}
+
+	public Sprite(SpriteType t, Object object)
+	{
+		this();
+		type = t;
+		linkedObject = object;
 	}
 
 	/**
@@ -151,5 +172,21 @@ public class Sprite
 	public int getHeight()
 	{
 		return getCurrentAnimationImage().getHeight();
+	}
+
+	/**
+	 * Attach an object to this Sprite
+	 */
+	public void setLinkedObject(Object o)
+	{
+		linkedObject = o;
+	}
+
+	/**
+	 * @return the attached object if there is one, else return null
+	 */
+	public Object getLinkedObject()
+	{
+		return linkedObject;
 	}
 }

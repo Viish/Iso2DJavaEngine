@@ -18,14 +18,18 @@
 
 package com.viish.apis.iso2djavaengine;
 
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.GraphicsWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.Wrappers;
+import com.viish.apis.iso2djavaengine.wrappers.WrappersFactory;
 
 public class Map
 {
+	public static Wrappers	WRAPPER;
 	private Orientation		currentOrientation;
 	private Layout			map;
 	private Layout			characters;
@@ -42,8 +46,9 @@ public class Map
 	private double			zoom		= 1.0;
 	private int				cellBordureHeight;
 
-	public Map(int width, int height)
+	public Map(int width, int height, Wrappers w)
 	{
+		WRAPPER = w;
 		layouts = new ArrayList<Layout>();
 		currentOrientation = Orientation.NORTH_EAST; // Actually the only one
 														// working
@@ -58,7 +63,8 @@ public class Map
 
 	/**
 	 * Add a layout at the given index. Can be used to add Sprites between the
-	 * map and the characters for example.
+	 * map and the characters for example. The lower the index is, sooner the
+	 * sprite is displayed
 	 */
 	public void addLayout(int n, Layout layout)
 	{
@@ -96,8 +102,10 @@ public class Map
 	{
 		for (Layout layout : layouts)
 		{
-			if (layout.getName().equals(layoutName)) { return layout.getCell(x,
-					y); }
+			if (layout.getName().equals(layoutName))
+			{
+				return layout.getCell(x, y);
+			}
 		}
 		return null;
 	}
@@ -139,7 +147,7 @@ public class Map
 	 */
 	public void zoomIn()
 	{
-		zoom += 0.25;
+		zoom += 0.2;
 	}
 
 	/**
@@ -147,7 +155,7 @@ public class Map
 	 */
 	public void zoomOut()
 	{
-		zoom -= 0.25;
+		zoom -= 0.2;
 	}
 
 	/**
@@ -185,7 +193,7 @@ public class Map
 		{
 			for (int i = sizeX - 1; i >= 0; i--)
 			{
-				if (isInside(x, y, i, j))
+				if (isPointInsideCell(x, y, i, j))
 				{
 					return getCharacterSprite(i, j);
 				}
@@ -204,9 +212,8 @@ public class Map
 		{
 			for (int i = sizeX - 1; i >= 0; i--)
 			{
-				if (isInside(x, y, i, j))
+				if (isPointInsideCell(x, y, i, j))
 				{
-					System.out.println(i + "/" + j);
 					return getMapSprite(i, j);
 				}
 			}
@@ -216,24 +223,58 @@ public class Map
 	}
 
 	/**
+	 * @return the top layout's sprite (not null) at that screen coordinates, or
+	 *         null if none is found
+	 */
+	public Sprite getHighestSpriteAt(int x, int y)
+	{
+		int cellX = -1, cellY = -1;
+
+		for (int j = 0; j < sizeY; j++)
+		{
+			for (int i = sizeX - 1; i >= 0; i--)
+			{
+				if (isPointInsideCell(x, y, i, j))
+				{
+					cellX = i;
+					cellY = j;
+					break;
+				}
+			}
+		}
+		if (cellX == -1 || cellY == -1)
+			return null;
+
+		for (int k = layouts.size() - 1; k >= 0; k--)
+		{
+			Layout layout = layouts.get(k);
+			Sprite sprite = getSprite(layout.getName(), cellX, cellY);
+			if (sprite != null)
+				return sprite;
+		}
+
+		return null;
+	}
+
+	/**
 	 * @return True if the coordinates x,y are in the cell i,j else return False
 	 */
-	private boolean isInside(int x, int y, int i, int j)
+	private boolean isPointInsideCell(int x, int y, int i, int j)
 	{
-		// FIXME : bug in the detection
-		System.out.println("Clic = " + x + "/" + y);
-		int cellWidth = getMapSprite(0, 0).getWidth();
-		int cellHeight = getMapSprite(0, 0).getHeight();
-		int cellLeftTopCornerX = calculatePositionX(i, j, cellWidth);
-		int cellLeftTopCornerY = calculatePositionY(i, j, cellHeight);
-		int cellMaxEdgeX = (cellWidth / 2);
-		int cellMaxEdgeY = ((cellHeight - cellBordureHeight) / 2);
+		int cellWidth = (int) (getMapSprite(0, 0).getWidth());
+		int cellHeight = (int) (getMapSprite(0, 0).getHeight());
+		int cellLeftTopCornerX = (int) (calculatePositionX(i, j, cellWidth) * zoom);
+		int cellLeftTopCornerY = (int) (calculatePositionY(i, j, cellHeight) * zoom);
+		int cellMaxEdgeX = (int) ((cellWidth / 2) * zoom);
+		int cellMaxEdgeY = (int) (((cellHeight - cellBordureHeight) / 2) * zoom);
 		int cellCenterX = cellLeftTopCornerX + cellMaxEdgeX;
 		int cellCenterY = cellLeftTopCornerY + cellMaxEdgeY;
 
-		return (Math.abs(cellCenterX - x) / cellMaxEdgeX)
-				+ (Math.abs(cellCenterY - y) / cellMaxEdgeY) < 1;
-
+		DiamondWrapper diamondW = WrappersFactory.newDiamondWrapper(new int[] {
+				cellLeftTopCornerX, cellCenterX, cellCenterX + cellMaxEdgeX,
+				cellCenterX }, new int[] { cellCenterY, cellLeftTopCornerY,
+				cellCenterY, cellCenterY + cellMaxEdgeY }, 4);
+		return diamondW.contains(x, y);
 	}
 
 	/**
@@ -301,7 +342,10 @@ public class Map
 	{
 		offsetX = offX;
 		offsetY = offY;
-		
+
+		AffineTransform at = g2d.getTransform();
+		g2d.scale(zoom, zoom);
+
 		switch (currentOrientation)
 		{
 		// TODO : Draw Sprites from other layouts
@@ -334,9 +378,6 @@ public class Map
 					}
 				}
 
-				//FIXME : doesn't seems to do something
-				g2d.scale(zoom, zoom);
-
 				break;
 			// TODO : be able to rotate the map
 			case NORTH_WEST:
@@ -346,6 +387,8 @@ public class Map
 			case SOUTH_WEST:
 				break;
 		}
+
+		g2d.setTransform(at);
 	}
 
 	/**
@@ -418,6 +461,9 @@ public class Map
 		return y;
 	}
 
+	/**
+	 * Draw a Sprite's image, used only for cell map
+	 */
 	private void drawMapImage(GraphicsWrapper g2d, Sprite img, int i, int j)
 	{
 		int x = calculatePositionX(i, j, img.getWidth());
@@ -434,6 +480,9 @@ public class Map
 		g2d.drawImage(img.getNextAnimationImage(), x, y);
 	}
 
+	/**
+	 * Draw a Sprite's image, used only for characters
+	 */
 	private void drawCharacterImage(GraphicsWrapper g2d, Sprite img,
 			Sprite cell, int i, int j)
 	{

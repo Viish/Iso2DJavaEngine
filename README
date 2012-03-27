@@ -1,5 +1,5 @@
 Version : 0.2_SNAPSHOT
-Date : 2012-03-27
+Date : 2012-03-28
 Author : Sylvain "Viish" Berfini
 License : GPL v3
 Repository = https://github.com/Viish/Iso2DJavaEngine
@@ -11,14 +11,18 @@ v0.1 Features (2012-03-25) :
 * Move Sprites
 * Rotate Sprites
 
-v0.2_SNAPSHOT Features (2012-03-27) :
+v0.2_SNAPSHOT Features (2012-03-28) :
 * Better Wrapper API
 * More functions to the API
 * Draws the map starting at 0,0 (bugfix)
-* Be able to click on a Sprite and know which one has been clicked (started)
-* Zoom/UnZoom the map (started)
+* Be able to click on a Sprite and know which one has been clicked
+* Zoom/UnZoom the map
+* An object can now be attached to a Sprite
 
 v0.2 TODO List :
-* Better Sprites' animations
-* Be able to highligth a sprite using an Image mask
+* Be able to highligth sprite(s) using an Image mask
+
+v0.3 TODO List :
+* Read Sprites from file
+* Better Sprites' animations management
 * Be able to rotate the map

@@ -20,5 +20,5 @@ package com.viish.apis.iso2djavaengine;
 
 public enum SpriteType
 {
-	CELL, CHARACTER;
+	UNDEFINED, CELL, CHARACTER;
 }

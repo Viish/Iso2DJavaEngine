@@ -18,43 +18,21 @@
 
 package com.viish.apis.iso2djavaengine.wrappers.awt;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
+import java.awt.Polygon;
 
-import com.viish.apis.iso2djavaengine.wrappers.GraphicsWrapper;
-import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
 
-public class AWTGraphicsWrapper implements GraphicsWrapper
+public class AWTDiamondWrapper implements DiamondWrapper
 {
-	private Graphics2D	graphics;
+	private Polygon	diamond;
 
-	public AWTGraphicsWrapper(Graphics2D g2d)
+	public AWTDiamondWrapper(int[] Xs, int[] Ys, int n)
 	{
-		graphics = g2d;
+		diamond = new Polygon(Xs, Ys, n);
 	}
 
-	public void drawImage(ImageWrapper img, int x, int y)
+	public boolean contains(int x, int y)
 	{
-		graphics.drawImage(img.getRawImage(), x, y, null);
-	}
-
-	public void scale(double sx, double sy)
-	{
-		graphics.scale(sx, sy);
-	}
-
-	public void drawText(String text, int x, int y)
-	{
-		graphics.drawString(text, x, y);
-	}
-
-	public AffineTransform getTransform()
-	{
-		return graphics.getTransform();
-	}
-
-	public void setTransform(AffineTransform at)
-	{
-		graphics.setTransform(at);
+		return diamond.contains(x, y);
 	}
 }
