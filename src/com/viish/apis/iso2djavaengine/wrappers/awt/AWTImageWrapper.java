@@ -20,6 +20,8 @@ package com.viish.apis.iso2djavaengine.wrappers.awt;
 
 import java.awt.Image;
 
+import javax.swing.ImageIcon;
+
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 
 public class AWTImageWrapper implements ImageWrapper
@@ -28,6 +30,7 @@ public class AWTImageWrapper implements ImageWrapper
 	
 	public AWTImageWrapper(Image img)
 	{
+		new ImageIcon(img);
 		image = img;
 	}
 

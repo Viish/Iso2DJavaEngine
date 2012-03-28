@@ -31,6 +31,7 @@ public class Sprite
 	private Orientation		currentOrientation;
 	private SpriteType		type	= SpriteType.UNDEFINED;
 	private Object			linkedObject;
+	private int				x, y;
 
 	public Sprite()
 	{
@@ -189,5 +190,30 @@ public class Sprite
 	public Object getLinkedObject()
 	{
 		return linkedObject;
+	}
+	
+	/**
+	 * @return the X coordinate of the Sprite on the Map
+	 */
+	public int getX() 
+	{
+		return x;
+	}
+	
+	/**
+	 * @return the Y coordinate of the Sprite on the Map
+	 */
+	public int getY() 
+	{
+		return y;
+	}
+	
+	/**
+	 * set the X,Y coordinates of the Sprite on the Map
+	 */
+	public void setXY(int x, int y)
+	{
+		this.x = x;
+		this.y = y;
 	}
 }

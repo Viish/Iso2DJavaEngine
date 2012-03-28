@@ -26,7 +26,7 @@ public class AWTColorWrapper implements ColorWrapper {
 	public Color color;
 	
 	public AWTColorWrapper(int r, int g, int b, int a) {
-		color = new Color(r, g, b, a);
+		color = new Color(r, g, b, 255 * a / 100);
 	}
 
 	public Object getNativeObject() {

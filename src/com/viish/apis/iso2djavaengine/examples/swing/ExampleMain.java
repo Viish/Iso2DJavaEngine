@@ -16,12 +16,13 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.viish.apis.iso2djavaengine.exemples;
+package com.viish.apis.iso2djavaengine.exemples.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -35,12 +36,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.imageio.ImageIO;
+
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
 import com.viish.apis.iso2djavaengine.AnimationType;
 import com.viish.apis.iso2djavaengine.Map;
 import com.viish.apis.iso2djavaengine.Orientation;
@@ -48,46 +50,29 @@ import com.viish.apis.iso2djavaengine.Sprite;
 import com.viish.apis.iso2djavaengine.SpriteType;
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.Wrappers;
+import com.viish.apis.iso2djavaengine.wrappers.WrappersFactory;
 import com.viish.apis.iso2djavaengine.wrappers.awt.AWTGraphicsWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.awt.AWTImageWrapper;
 
-public class ExempleMain
+public class ExampleMain
 {
 	ExemplePanel	monPanel;
-	boolean			walkAxelBack	= false;
 
-	public ExempleMain()
+	public ExampleMain()
 	{
 		final JFrame window = new JFrame();
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setSize(850, 550);
+		window.setSize(900, 510);
 		JPanel pane = new JPanel();
 		try
 		{
 			monPanel = new ExemplePanel();
-			JButton rotate = new JButton("Rotate Axel");
-			JButton walk = new JButton("Walk Axel");
+			JButton rotate = new JButton("Rotate Orc");
 			rotate.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					monPanel.axel.rotate();
-				}
-			});
-			walk.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					if (!walkAxelBack)
-					{
-						monPanel.move(7, 11, 7, 4);
-						walkAxelBack = true;
-					}
-					else
-					{
-						monPanel.move(7, 4, 7, 11);
-						walkAxelBack = false;
-					}
+					monPanel.orc.rotate();
 				}
 			});
 			pane.setLayout(new BorderLayout());
@@ -96,16 +81,25 @@ public class ExempleMain
 			BorderLayout controlsLayout = new BorderLayout();
 			controls.setLayout(controlsLayout);
 			controls.add(rotate, BorderLayout.EAST);
-			controls.add(walk, BorderLayout.WEST);
-//			pane.add(controls, BorderLayout.SOUTH);
+			pane.add(controls, BorderLayout.SOUTH);
 
 			window.setContentPane(pane);
+			window.setTitle("Move my Orc ! (Highligth colors are random)");
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 		window.setVisible(true);
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask()
+		{
+			public void run()
+			{
+				monPanel.repaint();
+			}
+		}, 0, 100); // Time for Sprites' animation speed
 	}
 
 	public static void main(String[] args)
@@ -114,7 +108,7 @@ public class ExempleMain
 		{
 			public void run()
 			{
-				new ExempleMain();
+				new ExampleMain();
 			}
 		});
 	}
@@ -127,25 +121,34 @@ class ExemplePanel extends JPanel implements MouseMotionListener,
 	private Map					map;
 	private int					offsetX				= 0, offsetY = 0;
 	private int					tempX, tempY;
-	public Sprite				axel;
+	public Sprite				orc;
+	private int					sizeX				= 9;
+	private int					sizeY				= 13;
 
 	public ExemplePanel() throws IOException
 	{
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
-
-		int sizeX = 9;
-		int sizeY = 13;
-		map = new Map(sizeX, sizeY, Wrappers.AWT);
-		ImageWrapper img = new AWTImageWrapper(ImageIO.read(this.getClass()
-				.getResource("images/tile3_small.png")));
-		ImageWrapper img2 = new AWTImageWrapper(ImageIO.read(this.getClass()
-				.getResource("images/tile3_small.png")));
-		map.setCellBordureHeight(0); // 11
-
-		Sprite vyers = new ExempleSprite2(this.getClass(), "images/vyers/");
 		
+		map = new Map(sizeX, sizeY, Wrappers.AWT);
+		
+		ImageWrapper snow = new AWTImageWrapper(Toolkit.getDefaultToolkit().getImage(this.getClass()
+				.getResource("/images/map/snow.png")));
+		ImageWrapper grass = new AWTImageWrapper(Toolkit.getDefaultToolkit().getImage(this.getClass()
+				.getResource("/images/map/grass.png")));
+		ImageWrapper dirt = new AWTImageWrapper(Toolkit.getDefaultToolkit().getImage(this.getClass()
+				.getResource("/images/map/dirt.png")));
+		ImageWrapper rock = new AWTImageWrapper(Toolkit.getDefaultToolkit().getImage(this.getClass()
+				.getResource("/images/map/rock.png")));
+		ImageWrapper stone = new AWTImageWrapper(Toolkit.getDefaultToolkit().getImage(this.getClass()
+				.getResource("/images/map/stone.png")));
+		ImageWrapper[] cells = new ImageWrapper[] { snow, grass, dirt, rock, stone };
+		map.setCellBordureHeight(0);
+
+		orc = new ExampleSpriteOrc(this.getClass(), "/images/Orc/");
+		map.setCharacterSprite(4, 4, orc);
+
 		Random r = new Random();
 		for (int i = 0; i < sizeX; i++)
 		{
@@ -153,46 +156,45 @@ class ExemplePanel extends JPanel implements MouseMotionListener,
 			{
 				Sprite cell = new Sprite(SpriteType.CELL);
 				List<ImageWrapper> anim = new ArrayList<ImageWrapper>();
-				if (r.nextBoolean())
-					anim.add(img);
-				else
-					anim.add(img2);
+				
+				int n = r.nextInt(cells.length);
+				anim.add(cells[n]);
+				
 				cell.addAnimation(AnimationType.IDLE, anim,
 						Orientation.NORTH_EAST);
 				cell.setCurrentAnimation(AnimationType.IDLE);
 				map.setMapSprite(i, j, cell);
-				
-				if (r.nextInt(3) % 3 == 0)
-					map.setCharacterSprite(i, j, vyers);
 			}
 		}
+	}
 
-//		axel = new ExempleSprite(this.getClass(), "images/axel");
-//		map.setCharacterSprite(7, 11, axel);
-		
-
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask()
+	private void showAvailableMovements(Sprite s)
+	{
+		int moveSpeed = 7;
+		int x = s.getX();
+		int y = s.getY();
+		Random random = new Random();
+		int r = random.nextInt(256);
+		int g = random.nextInt(256);
+		int b = random.nextInt(256);
+		for (int i = -moveSpeed; i <= moveSpeed; i++)
 		{
-			public void run()
+			for (int j = -moveSpeed; j <= moveSpeed; j++)
 			{
-				repaint();
+				if (((x + i) >= 0 && (x + i) < sizeX) && ((j + y) >= 0 && (j + y) < sizeY) && (Math.abs(i) + Math.abs(j) <= moveSpeed))
+					map.setHighlightedSprite(x + i, y + j, true, WrappersFactory.newColor(r, g, b, 25));
 			}
-		}, 0, 150); // Time for Sprites' animation speed
+			
+		}
 	}
 
-	public void move(int fromX, int fromY, int toX, int toY)
+	protected void paintComponent(Graphics g)
 	{
-		map.move(fromX, fromY, toX, toY);
-	}
+		super.paintComponent(g);
+		
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 
-	public void paint(Graphics g)
-	{
-		super.paint(g);
-
-        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        
 		map.refresh(new AWTGraphicsWrapper((Graphics2D) g), offsetX, offsetY);
 	}
 
@@ -237,22 +239,37 @@ class ExemplePanel extends JPanel implements MouseMotionListener,
 	{
 		Sprite s = map.getHighestSpriteAt(e.getX(), e.getY());
 		if (s == null)
+			return;
+		
+		if (s.getType() == SpriteType.CHARACTER)
 		{
-			System.out.println("No sprite found");
-		}
-		else if (s.getType() == SpriteType.CHARACTER)
-		{
-			System.out.println("Character found : " + s.getLinkedObject());
+			if (!map.isCellHighlighted(s.getX(), s.getY()))
+			{
+				showAvailableMovements(s);
+			}
 		}
 		else if (s.getType() == SpriteType.CELL)
 		{
-			System.out.println("Map found");
+			if (map.isCellHighlighted(s.getX(), s.getY()))
+			{
+				map.resetAllHighlight();
+				if (s.getX() == orc.getX() || s.getY() == orc.getY())
+				{
+					map.moveCharacter(orc.getX(), orc.getY(),
+							new int[] { s.getX() }, new int[] { s.getY() });
+				}
+				else
+				{
+					if (orc.getX() + s.getX() < orc.getY() + s.getY()) {
+						map.moveCharacter(orc.getX(), orc.getY(),
+								new int[] { orc.getX(), s.getX() }, new int[] { s.getY(), s.getY() });
+					} else {
+						map.moveCharacter(orc.getX(), orc.getY(),
+								new int[] { s.getX(), s.getX() }, new int[] { orc.getY(), s.getY() });
+					}
+				}
+			}
 		}
-		else
-		{
-			System.out.println("Unknow sprite found");
-		}
-		map.setMapHighlightedSprite(s, true);
 	}
 
 	public void mouseEntered(MouseEvent e)

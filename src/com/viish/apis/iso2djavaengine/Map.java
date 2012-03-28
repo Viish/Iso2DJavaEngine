@@ -18,7 +18,6 @@
 
 package com.viish.apis.iso2djavaengine;
 
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,12 +34,11 @@ public class Map
 	private Orientation		currentOrientation;
 	private Layout			map;
 	private Layout			characters;
-	private boolean[][]		highlight;
+	private HighLight[][]	highlight;
 	private int				width		= -1, height = -1;
 	private int				minW, maxW, minH, maxH;
-	private List<Integer>	walkingPath;
+	private List<Point>		walkingPath;
 	private int				sizeX, sizeY;
-	private int				fixedX, fixedY;
 	private int				lastX, lastY;
 	private int				offsetX, offsetY;
 	private Sprite			walkingSprite;
@@ -60,7 +58,7 @@ public class Map
 
 		map = new Layout("Map", sizeX, sizeY);
 		characters = new Layout("Characters", sizeX, sizeY);
-		highlight = new boolean[sizeX][sizeY];
+		highlight = new HighLight[sizeX][sizeY];
 		layouts.add(map);
 		layouts.add(characters);
 	}
@@ -93,6 +91,7 @@ public class Map
 			if (layout.getName().equals(layoutName))
 			{
 				layout.setCell(x, y, cell);
+				cell.setXY(x, y);
 				return true;
 			}
 		}
@@ -128,6 +127,7 @@ public class Map
 	public void setMapSprite(int x, int y, Sprite sprite)
 	{
 		map.setCell(x, y, sprite);
+		sprite.setXY(x, y);
 	}
 
 	/**
@@ -144,6 +144,9 @@ public class Map
 	public void setCharacterSprite(int x, int y, Sprite sprite)
 	{
 		characters.setCell(x, y, sprite);
+
+		if (sprite != null)
+			sprite.setXY(x, y);
 	}
 
 	/**
@@ -177,32 +180,66 @@ public class Map
 	{
 		return height;
 	}
-	
+
 	/**
 	 * Highlight the cell Sprite at Map coordinates i, j
 	 */
 	public void setHighlightedSprite(int i, int j, boolean hightlight)
 	{
-		highlight[i][j] = hightlight;
+		highlight[i][j] = new HighLight(hightlight);
 	}
 	
 	/**
-	 * Highlight the cell Sprite which is using Sprite s on Map or Character layout
+	 * Highlight the cell Sprite at Map coordinates i, j
 	 */
-	public void setMapHighlightedSprite(Sprite s, boolean hightlight) {
-		for (int i = 0; i < sizeX; i++) 
+	public void setHighlightedSprite(int i, int j, boolean hightlight, ColorWrapper color)
+	{
+		highlight[i][j] = new HighLight(hightlight, color);
+	}
+
+	/**
+	 * Highlight the cell Sprite which is using Sprite s on Map or Character
+	 * layout
+	 */
+	public void setMapSpriteHighlighted(Sprite s, boolean hightlight)
+	{
+		for (int i = 0; i < sizeX; i++)
 		{
 			for (int j = 0; j < sizeY; j++)
 			{
 				Sprite mapSprite = getMapSprite(i, j);
 				Sprite charSprite = getCharacterSprite(i, j);
-				if ((mapSprite != null && mapSprite.equals(s)) || (charSprite != null && charSprite.equals(s)))
+				if ((mapSprite != null && mapSprite.equals(s))
+						|| (charSprite != null && charSprite.equals(s)))
 				{
 					setHighlightedSprite(i, j, hightlight);
 					return;
 				}
 			}
 		}
+	}
+
+	/**
+	 * Reset all cells to not highlighted
+	 */
+	public void resetAllHighlight()
+	{
+		for (int i = 0; i < sizeX; i++)
+		{
+			for (int j = 0; j < sizeY; j++)
+			{
+				highlight[i][j] = null;
+			}
+		}
+	}
+
+	/**
+	 * @return True if the cell at Map coordinates x,y is highlighted, else
+	 *         return False
+	 */
+	public boolean isCellHighlighted(int x, int y)
+	{
+		return highlight[x][y] != null && highlight[x][y].isEnabled();
 	}
 
 	/**
@@ -292,32 +329,47 @@ public class Map
 	 */
 	private boolean isPointInsideCell(int x, int y, int i, int j)
 	{
-		DiamondWrapper diamondW = getDiamondForCell(i, j);
+		DiamondWrapper diamondW = getDiamondForCell(i, j, true);
 		return diamondW.contains(x, y);
+	}
+
+	public void moveCharacter(int fromX, int fromY, int[] toXs, int[] toYs)
+	{
+		Sprite sprite = getSprite("Characters", fromX, fromY);
+
+		if (toXs.length != toYs.length || sprite == null)
+			return;
+
+		walkingSprite = sprite;
+		lastX = fromX;
+		lastY = fromY;
+
+		walkingPath = new ArrayList<Point>();
+		addToPath(walkingSprite, fromX, fromY, toXs[0], toYs[0]);
+
+		for (int i = 1; i < toXs.length; i++)
+		{
+			addToPath(walkingSprite, toXs[i - 1], toYs[i - 1], toXs[i], toYs[i]);
+		}
+
+		sprite.setCurrentAnimation(AnimationType.WALK);
+		isWalking = true;
 	}
 
 	/**
 	 * Move a Character's Sprites from a point to another (only in direct line
 	 * for now)
 	 */
-	public void move(int fromX, int fromY, int toX, int toY)
+	private void addToPath(Sprite sprite, int fromX, int fromY, int toX, int toY)
 	{
-		Sprite sprite = getSprite("Characters", fromX, fromY);
-		walkingSprite = sprite;
-		lastX = fromX;
-		lastY = fromY;
-
-		walkingPath = new ArrayList<Integer>();
 		if (fromX == toX)
 		{
-			fixedX = fromX;
-			fixedY = -1;
 			if (fromY < toY)
 			{
 				sprite.setOrientation(Orientation.NORTH_EAST);
 				for (int i = fromY + 1; i <= toY; i += 1)
 				{
-					walkingPath.add(i);
+					walkingPath.add(new Point(fromX, i));
 				}
 			}
 			else
@@ -325,44 +377,40 @@ public class Map
 				sprite.setOrientation(Orientation.SOUTH_WEST);
 				for (int i = fromY - 1; i >= toY; i -= 1)
 				{
-					walkingPath.add(i);
+					walkingPath.add(new Point(fromX, i));
 				}
 			}
 		}
 		else if (fromY == toY)
 		{
-			fixedY = fromY;
-			fixedX = -1;
 			if (fromX < toX)
 			{
-				sprite.setOrientation(Orientation.NORTH_WEST);
+				sprite.setOrientation(Orientation.SOUTH_EAST);
 				for (int i = fromX + 1; i <= toX; i += 1)
 				{
-					walkingPath.add(i);
+					walkingPath.add(new Point(i, fromY));
 				}
 			}
 			else
 			{
-				sprite.setOrientation(Orientation.SOUTH_EAST);
+				sprite.setOrientation(Orientation.NORTH_WEST);
 				for (int i = fromX - 1; i >= toX; i -= 1)
 				{
-					walkingPath.add(i);
+					walkingPath.add(new Point(i, fromY));
 				}
 			}
 		}
-		sprite.setCurrentAnimation(AnimationType.WALK);
-		isWalking = true;
 	}
 
 	/**
-	 * Refresh the map. Should be called at static interval.
+	 * Refresh the map. Should be called at regular interval.
 	 */
+
 	public void refresh(GraphicsWrapper g2d, int offX, int offY)
 	{
 		offsetX = offX;
 		offsetY = offY;
 
-		AffineTransform at = g2d.getTransform();
 		g2d.scale(zoom, zoom);
 
 		switch (currentOrientation)
@@ -406,8 +454,6 @@ public class Map
 			case SOUTH_WEST:
 				break;
 		}
-
-		g2d.setTransform(at);
 	}
 
 	/**
@@ -417,21 +463,35 @@ public class Map
 	{
 		if (isWalking)
 		{
-			Iterator<Integer> it = walkingPath.iterator();
+			Iterator<Point> it = walkingPath.iterator();
 			if (it.hasNext())
 			{
-				int next = it.next();
-				if (fixedX != -1)
+				Point next = it.next();
+				int nextY = next.getY();
+				int nextX = next.getX();
+				if (lastX == nextX)
 				{
-					setCharacterSprite(fixedX, next, walkingSprite);
-					setCharacterSprite(fixedX, lastY, null);
-					lastY = next;
+					if (nextY > lastY)
+						walkingSprite.setOrientation(Orientation.NORTH_EAST);
+					else
+						walkingSprite.setOrientation(Orientation.SOUTH_WEST);
+
+					setCharacterSprite(nextX, nextY, walkingSprite);
+					walkingSprite.setXY(nextX, nextY);
+					setCharacterSprite(nextX, lastY, null);
+					lastY = nextY;
 				}
-				else if (fixedY != -1)
+				else if (lastY == nextY)
 				{
-					setCharacterSprite(next, fixedY, walkingSprite);
-					setCharacterSprite(lastX, fixedY, null);
-					lastX = next;
+					if (nextX > lastX)
+						walkingSprite.setOrientation(Orientation.SOUTH_EAST);
+					else
+						walkingSprite.setOrientation(Orientation.NORTH_WEST);
+
+					setCharacterSprite(nextX, nextY, walkingSprite);
+					walkingSprite.setXY(nextX, nextY);
+					setCharacterSprite(lastX, nextY, null);
+					lastX = nextX;
 				}
 				it.remove();
 			}
@@ -497,8 +557,8 @@ public class Map
 		}
 
 		g2d.drawImage(img.getNextAnimationImage(), x, y);
-		
-		if (highlight[i][j])
+
+		if (isCellHighlighted(i, j))
 			drawHighlight(g2d, i, j);
 	}
 
@@ -517,24 +577,26 @@ public class Map
 		y += -img.getHeight() + cellHeight / 2;
 		g2d.drawImage(img.getNextAnimationImage(), x, y);
 	}
-	
+
 	/**
 	 * Draw the highlight for the Sprite at Map coordinates i, j
 	 */
-	private void drawHighlight(GraphicsWrapper g2d, int i, int j) {
-		int transparency = 25; // The lower the more transparent
-		ColorWrapper color = WrappersFactory.newColor(255, 255, 0, 255 * transparency / 100);
-		g2d.setColor(color);
-		
-		DiamondWrapper diamondW = getDiamondForCell(i, j);
+	private void drawHighlight(GraphicsWrapper g2d, int i, int j)
+	{
+		g2d.setColor(highlight[i][j].getColor());
+		DiamondWrapper diamondW = getDiamondForCell(i, j, false);
 		g2d.fillDiamond(diamondW);
 	}
-	
+
 	/**
 	 * @return a Diamond shape representing the cell at Map coordinates i, j
 	 */
-	private DiamondWrapper getDiamondForCell(int i, int j) 
+	private DiamondWrapper getDiamondForCell(int i, int j, boolean useZoom)
 	{
+		double zoom = this.zoom;
+		if (!useZoom)
+			zoom = 1;
+
 		int cellWidth = (int) (getMapSprite(0, 0).getWidth());
 		int cellHeight = (int) (getMapSprite(0, 0).getHeight());
 		int cellLeftTopCornerX = (int) (calculatePositionX(i, j, cellWidth) * zoom);
@@ -548,7 +610,7 @@ public class Map
 				cellLeftTopCornerX, cellCenterX, cellCenterX + cellMaxEdgeX,
 				cellCenterX }, new int[] { cellCenterY, cellLeftTopCornerY,
 				cellCenterY, cellCenterY + cellMaxEdgeY }, 4);
-		
+
 		return diamondW;
 	}
 }

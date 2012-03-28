@@ -1,17 +1,17 @@
-Version : 0.2
+Version : 0.2.1
 Date : 2012-03-28
 Author : Sylvain "Viish" Berfini
 License : GPL v3
 Repository = https://github.com/Viish/Iso2DJavaEngine
 
-v0.1 Features (2012-03-25) :
+0.1 Features (2012-03-25) :
 * Draw Sprites in layouts
 * Predefined layouts for map or characters
 * Animate Sprites
 * Move Sprites
 * Rotate Sprites
 
-v0.2 Features (2012-03-28) :
+0.2 Features (2012-03-28) :
 * Better Wrapper API
 * More functions to the API
 * Draws the map starting at 0,0 (bugfix)
@@ -21,8 +21,14 @@ v0.2 Features (2012-03-28) :
 * Be able to highlight sprite(s) using an Image mask
 * Color Wrapper
 
-v0.3 TODO List :
-* Different highlight colors
+0.2.1 Features (2012-03-28) :
+* Open sources pictures to make the example alive
+* Bug fix for the bad highlight display when map was zoomed
+* Be able to move a character following a path
+* Highlight color can be chose
+
+TODO List :
+* 3D maps
 * Read Sprites from file
 * Better Sprites' animations management
 * Be able to rotate the map
