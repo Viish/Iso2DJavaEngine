@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 
+import com.viish.apis.iso2djavaengine.wrappers.ColorWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.GraphicsWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
@@ -65,7 +66,7 @@ public class AWTGraphicsWrapper implements GraphicsWrapper
 		graphics.fillPolygon((Polygon) diamond.getNativeObject());
 	}
 
-	public void setColor(Color color) {
-		graphics.setColor(color);
+	public void setColor(ColorWrapper color) {
+		graphics.setColor((Color) color.getNativeObject());
 	}
 }

@@ -19,15 +19,26 @@
 package com.viish.apis.iso2djavaengine.wrappers;
 
 import com.viish.apis.iso2djavaengine.Map;
+import com.viish.apis.iso2djavaengine.wrappers.awt.AWTColorWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.awt.AWTDiamondWrapper;
 
 public class WrappersFactory
 {
-	public static DiamondWrapper newDiamondWrapper(int[] Xs, int[] Ys, int n) {
+	public static DiamondWrapper newDiamond(int[] Xs, int[] Ys, int n) {
 		switch (Map.WRAPPER)
 		{
 			case AWT:
 				return new AWTDiamondWrapper(Xs, Ys, n);
+			default:
+				return null;
+		}
+	}
+	
+	public static ColorWrapper newColor(int r, int g, int b, int a) {
+		switch (Map.WRAPPER)
+		{
+			case AWT:
+				return new AWTColorWrapper(r, g, b, a);
 			default:
 				return null;
 		}

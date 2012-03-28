@@ -18,12 +18,12 @@
 
 package com.viish.apis.iso2djavaengine;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.viish.apis.iso2djavaengine.wrappers.ColorWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.GraphicsWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.Wrappers;
@@ -522,8 +522,8 @@ public class Map
 	 * Draw the highlight for the Sprite at Map coordinates i, j
 	 */
 	private void drawHighlight(GraphicsWrapper g2d, int i, int j) {
-		int transparency = 50;
-		Color color = new Color(255, 255, 0, 255 * transparency / 100);
+		int transparency = 25; // The lower the more transparent
+		ColorWrapper color = WrappersFactory.newColor(255, 255, 0, 255 * transparency / 100);
 		g2d.setColor(color);
 		
 		DiamondWrapper diamondW = getDiamondForCell(i, j);
@@ -544,7 +544,7 @@ public class Map
 		int cellCenterX = cellLeftTopCornerX + cellMaxEdgeX;
 		int cellCenterY = cellLeftTopCornerY + cellMaxEdgeY;
 
-		DiamondWrapper diamondW = WrappersFactory.newDiamondWrapper(new int[] {
+		DiamondWrapper diamondW = WrappersFactory.newDiamond(new int[] {
 				cellLeftTopCornerX, cellCenterX, cellCenterX + cellMaxEdgeX,
 				cellCenterX }, new int[] { cellCenterY, cellLeftTopCornerY,
 				cellCenterY, cellCenterY + cellMaxEdgeY }, 4);

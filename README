@@ -1,4 +1,4 @@
-Version : 0.2_SNAPSHOT
+Version : 0.2
 Date : 2012-03-28
 Author : Sylvain "Viish" Berfini
 License : GPL v3
@@ -11,7 +11,7 @@ v0.1 Features (2012-03-25) :
 * Move Sprites
 * Rotate Sprites
 
-v0.2_SNAPSHOT Features (2012-03-28) :
+v0.2 Features (2012-03-28) :
 * Better Wrapper API
 * More functions to the API
 * Draws the map starting at 0,0 (bugfix)
@@ -19,11 +19,10 @@ v0.2_SNAPSHOT Features (2012-03-28) :
 * Zoom/UnZoom the map
 * An object can now be attached to a Sprite
 * Be able to highlight sprite(s) using an Image mask
-
-v0.2 TODO List :
 * Color Wrapper
 
 v0.3 TODO List :
+* Different highlight colors
 * Read Sprites from file
 * Better Sprites' animations management
 * Be able to rotate the map
