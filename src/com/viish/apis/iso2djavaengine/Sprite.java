@@ -20,6 +20,7 @@ package com.viish.apis.iso2djavaengine;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 
 public class Sprite

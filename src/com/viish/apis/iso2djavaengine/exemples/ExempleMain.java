@@ -248,10 +248,11 @@ class ExemplePanel extends JPanel implements MouseMotionListener,
 		{
 			System.out.println("Map found");
 		}
-		else if (s.getType() == SpriteType.CELL)
+		else
 		{
-			System.out.println("Sprite found");
+			System.out.println("Unknow sprite found");
 		}
+		map.setMapHighlightedSprite(s, true);
 	}
 
 	public void mouseEntered(MouseEvent e)

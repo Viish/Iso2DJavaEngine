@@ -18,10 +18,12 @@
 
 package com.viish.apis.iso2djavaengine;
 
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.GraphicsWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.Wrappers;
@@ -33,6 +35,7 @@ public class Map
 	private Orientation		currentOrientation;
 	private Layout			map;
 	private Layout			characters;
+	private boolean[][]		highlight;
 	private int				width		= -1, height = -1;
 	private int				minW, maxW, minH, maxH;
 	private List<Integer>	walkingPath;
@@ -57,6 +60,7 @@ public class Map
 
 		map = new Layout("Map", sizeX, sizeY);
 		characters = new Layout("Characters", sizeX, sizeY);
+		highlight = new boolean[sizeX][sizeY];
 		layouts.add(map);
 		layouts.add(characters);
 	}
@@ -173,6 +177,33 @@ public class Map
 	{
 		return height;
 	}
+	
+	/**
+	 * Highlight the cell Sprite at Map coordinates i, j
+	 */
+	public void setHighlightedSprite(int i, int j, boolean hightlight)
+	{
+		highlight[i][j] = hightlight;
+	}
+	
+	/**
+	 * Highlight the cell Sprite which is using Sprite s on Map or Character layout
+	 */
+	public void setMapHighlightedSprite(Sprite s, boolean hightlight) {
+		for (int i = 0; i < sizeX; i++) 
+		{
+			for (int j = 0; j < sizeY; j++)
+			{
+				Sprite mapSprite = getMapSprite(i, j);
+				Sprite charSprite = getCharacterSprite(i, j);
+				if ((mapSprite != null && mapSprite.equals(s)) || (charSprite != null && charSprite.equals(s)))
+				{
+					setHighlightedSprite(i, j, hightlight);
+					return;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Define the height of the cell border if there is one (used to mask the
@@ -261,19 +292,7 @@ public class Map
 	 */
 	private boolean isPointInsideCell(int x, int y, int i, int j)
 	{
-		int cellWidth = (int) (getMapSprite(0, 0).getWidth());
-		int cellHeight = (int) (getMapSprite(0, 0).getHeight());
-		int cellLeftTopCornerX = (int) (calculatePositionX(i, j, cellWidth) * zoom);
-		int cellLeftTopCornerY = (int) (calculatePositionY(i, j, cellHeight) * zoom);
-		int cellMaxEdgeX = (int) ((cellWidth / 2) * zoom);
-		int cellMaxEdgeY = (int) (((cellHeight - cellBordureHeight) / 2) * zoom);
-		int cellCenterX = cellLeftTopCornerX + cellMaxEdgeX;
-		int cellCenterY = cellLeftTopCornerY + cellMaxEdgeY;
-
-		DiamondWrapper diamondW = WrappersFactory.newDiamondWrapper(new int[] {
-				cellLeftTopCornerX, cellCenterX, cellCenterX + cellMaxEdgeX,
-				cellCenterX }, new int[] { cellCenterY, cellLeftTopCornerY,
-				cellCenterY, cellCenterY + cellMaxEdgeY }, 4);
+		DiamondWrapper diamondW = getDiamondForCell(i, j);
 		return diamondW.contains(x, y);
 	}
 
@@ -478,6 +497,9 @@ public class Map
 		}
 
 		g2d.drawImage(img.getNextAnimationImage(), x, y);
+		
+		if (highlight[i][j])
+			drawHighlight(g2d, i, j);
 	}
 
 	/**
@@ -494,5 +516,39 @@ public class Map
 		x += (cellWidth - img.getWidth()) / 2;
 		y += -img.getHeight() + cellHeight / 2;
 		g2d.drawImage(img.getNextAnimationImage(), x, y);
+	}
+	
+	/**
+	 * Draw the highlight for the Sprite at Map coordinates i, j
+	 */
+	private void drawHighlight(GraphicsWrapper g2d, int i, int j) {
+		int transparency = 50;
+		Color color = new Color(255, 255, 0, 255 * transparency / 100);
+		g2d.setColor(color);
+		
+		DiamondWrapper diamondW = getDiamondForCell(i, j);
+		g2d.fillDiamond(diamondW);
+	}
+	
+	/**
+	 * @return a Diamond shape representing the cell at Map coordinates i, j
+	 */
+	private DiamondWrapper getDiamondForCell(int i, int j) 
+	{
+		int cellWidth = (int) (getMapSprite(0, 0).getWidth());
+		int cellHeight = (int) (getMapSprite(0, 0).getHeight());
+		int cellLeftTopCornerX = (int) (calculatePositionX(i, j, cellWidth) * zoom);
+		int cellLeftTopCornerY = (int) (calculatePositionY(i, j, cellHeight) * zoom);
+		int cellMaxEdgeX = (int) ((cellWidth / 2) * zoom);
+		int cellMaxEdgeY = (int) (((cellHeight - cellBordureHeight) / 2) * zoom);
+		int cellCenterX = cellLeftTopCornerX + cellMaxEdgeX;
+		int cellCenterY = cellLeftTopCornerY + cellMaxEdgeY;
+
+		DiamondWrapper diamondW = WrappersFactory.newDiamondWrapper(new int[] {
+				cellLeftTopCornerX, cellCenterX, cellCenterX + cellMaxEdgeX,
+				cellCenterX }, new int[] { cellCenterY, cellLeftTopCornerY,
+				cellCenterY, cellCenterY + cellMaxEdgeY }, 4);
+		
+		return diamondW;
 	}
 }

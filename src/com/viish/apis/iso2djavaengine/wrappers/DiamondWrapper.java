@@ -21,4 +21,6 @@ package com.viish.apis.iso2djavaengine.wrappers;
 public interface DiamondWrapper
 {
 	public boolean contains(int x, int y);
+	
+	public Object getNativeObject();
 }

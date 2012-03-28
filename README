@@ -18,11 +18,13 @@ v0.2_SNAPSHOT Features (2012-03-28) :
 * Be able to click on a Sprite and know which one has been clicked
 * Zoom/UnZoom the map
 * An object can now be attached to a Sprite
+* Be able to highlight sprite(s) using an Image mask
 
 v0.2 TODO List :
-* Be able to highligth sprite(s) using an Image mask
+* Color Wrapper
 
 v0.3 TODO List :
 * Read Sprites from file
 * Better Sprites' animations management
 * Be able to rotate the map
+* Better use of 3D isometrics Sprites
