@@ -16,7 +16,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.viish.apis.iso2djavaengine.exemples.swing;
+package com.viish.apis.iso2djavaengine.examples.swing;
 
 import java.awt.Toolkit;
 import java.io.IOException;
