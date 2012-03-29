@@ -96,7 +96,8 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 			{
 				if (((x + i) >= 0 && (x + i) < sizeX)
 						&& ((j + y) >= 0 && (j + y) < sizeY)
-						&& (Math.abs(i) + Math.abs(j) <= moveSpeed))
+						&& (Math.abs(i) + Math.abs(j) <= moveSpeed)
+						&& map.getCharacterSprite(x + i, j + y) == null)
 					map.setHighlightedSprite(x + i, y + j, true,
 							WrappersFactory.newColor(255, 255, 0, 25));
 			}
@@ -127,7 +128,7 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 	public void mouseDragged(MouseEvent me)
 	{
 		if (map.getHighestSpriteAt(me.getX(), me.getY()) == null
-				&& currentSelected == null)
+				&& currentSelected == null && tempX != -1 && tempY != -1)
 		{
 			offsetX += tempX - me.getX();
 			offsetY += tempY - me.getY();
@@ -137,8 +138,11 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 		else if (currentSelected != null)
 		{
 			Sprite cell = map.getHighestSpriteAt(me.getX(), me.getY());
-			if (cell == null)
+			if (cell == null
+					|| !map.isCellHighlighted(cell.getX(), cell.getY()))
+			{
 				return;
+			}
 
 			List<Point> path;
 
@@ -189,8 +193,9 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 			showAvailableMovements(currentSelected);
 			for (Point p : path)
 			{
-				map.setHighlightedSprite(p.getX(), p.getY(), true,
-						WrappersFactory.newColor(255, 0, 0, 25));
+				if (map.getCharacterSprite(p.getX(), p.getY()) == null)
+					map.setHighlightedSprite(p.getX(), p.getY(), true,
+							WrappersFactory.newColor(255, 0, 0, 25));
 			}
 		}
 	}
@@ -289,6 +294,11 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 					}
 				}
 			}
+			else
+			{
+				map.resetAllHighlight();
+				currentSelected = null;
+			}
 		}
 	}
 
@@ -305,5 +315,7 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 	public void mouseReleased(MouseEvent e)
 	{
 		mouseClicked(e);
+		tempX = -1;
+		tempY = -1;
 	}
 }

@@ -1,5 +1,5 @@
 Version : 0.3.0_SNAPSHOT
-Date : 2012-03-29
+Date : 2012-03-30
 Author : Sylvain "Viish" Berfini
 License : GPL v3
 Repository = https://github.com/Viish/Iso2DJavaEngine
@@ -27,7 +27,7 @@ Repository = https://github.com/Viish/Iso2DJavaEngine
 * Be able to move a character following a path
 * Highlight color can be chose
 
-0.3.0_SNAPSHOT FEATURES (2012-03-29) :
+0.3.0_SNAPSHOT FEATURES (2012-03-30) :
 * Bugfix for invisible Sprites if one was walking through another one
 * Read Sprites from one file (see ExampleSpriteSkeleton)
 * Characters paths can be simulated to highlight them before they are realized.
