@@ -18,11 +18,10 @@
 
 package com.viish.apis.iso2djavaengine.wrappers;
 
-import java.awt.Image;
 
 public interface ImageWrapper
 {
-	public Image getRawImage();
+	public Object getRawImage();
 
 	public int getWidth();
 

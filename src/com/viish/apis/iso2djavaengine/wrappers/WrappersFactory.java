@@ -19,6 +19,8 @@
 package com.viish.apis.iso2djavaengine.wrappers;
 
 import com.viish.apis.iso2djavaengine.Map;
+import com.viish.apis.iso2djavaengine.wrappers.android.AndroidColorWrapper;
+import com.viish.apis.iso2djavaengine.wrappers.android.AndroidDiamondWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.awt.AWTColorWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.awt.AWTDiamondWrapper;
 
@@ -35,6 +37,8 @@ public class WrappersFactory
 		{
 			case AWT:
 				return new AWTDiamondWrapper(Xs, Ys, n);
+			case ANDROID:
+				return new AndroidDiamondWrapper(Xs, Ys, n);
 			default:
 				return null;
 		}
@@ -53,6 +57,8 @@ public class WrappersFactory
 		{
 			case AWT:
 				return new AWTColorWrapper(r, g, b, a);
+			case ANDROID:
+				return new AndroidColorWrapper(r, g, b, a);
 			default:
 				return null;
 		}

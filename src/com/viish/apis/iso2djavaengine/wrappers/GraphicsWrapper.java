@@ -18,7 +18,6 @@
 
 package com.viish.apis.iso2djavaengine.wrappers;
 
-import java.awt.geom.AffineTransform;
 
 
 
@@ -27,8 +26,6 @@ public interface GraphicsWrapper
 	public void drawImage(ImageWrapper imageWrapper, int x, int y);
 	public void drawText(String text, int x, int y);
 	public void scale(double sx, double sy);
-	public AffineTransform getTransform();
-	public void setTransform(AffineTransform at);
 	public void setColor(ColorWrapper color);
 	public void fillDiamond(DiamondWrapper diamond);
 }

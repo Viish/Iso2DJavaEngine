@@ -20,5 +20,5 @@ package com.viish.apis.iso2djavaengine.wrappers;
 
 public enum Wrappers
 {
-	AWT;
+	AWT, ANDROID;
 }
