@@ -22,14 +22,17 @@ import java.awt.Color;
 
 import com.viish.apis.iso2djavaengine.wrappers.ColorWrapper;
 
-public class AWTColorWrapper implements ColorWrapper {
-	public Color color;
-	
-	public AWTColorWrapper(int r, int g, int b, int a) {
+public class AWTColorWrapper implements ColorWrapper
+{
+	public Color	color;
+
+	public AWTColorWrapper(int r, int g, int b, int a)
+	{
 		color = new Color(r, g, b, 255 * a / 100);
 	}
 
-	public Object getNativeObject() {
+	public Object getNativeObject()
+	{
 		return color;
 	}
 }

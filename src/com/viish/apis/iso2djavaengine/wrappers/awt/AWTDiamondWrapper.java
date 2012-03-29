@@ -35,8 +35,9 @@ public class AWTDiamondWrapper implements DiamondWrapper
 	{
 		return diamond.contains(x, y);
 	}
-	
-	public Object getNativeObject() {
+
+	public Object getNativeObject()
+	{
 		return diamond;
 	}
 }

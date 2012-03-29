@@ -191,23 +191,23 @@ public class Sprite
 	{
 		return linkedObject;
 	}
-	
+
 	/**
 	 * @return the X coordinate of the Sprite on the Map
 	 */
-	public int getX() 
+	public int getX()
 	{
 		return x;
 	}
-	
+
 	/**
 	 * @return the Y coordinate of the Sprite on the Map
 	 */
-	public int getY() 
+	public int getY()
 	{
 		return y;
 	}
-	
+
 	/**
 	 * set the X,Y coordinates of the Sprite on the Map
 	 */

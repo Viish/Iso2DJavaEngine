@@ -28,10 +28,11 @@ import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.GraphicsWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 
-public class AndroidGraphicsWrapper implements GraphicsWrapper {
-	
+public class AndroidGraphicsWrapper implements GraphicsWrapper
+{
+
 	private Canvas	canvas;
-	private Paint   paint;
+	private Paint	paint;
 
 	public AndroidGraphicsWrapper(Canvas c)
 	{
@@ -39,23 +40,29 @@ public class AndroidGraphicsWrapper implements GraphicsWrapper {
 		paint = new Paint();
 	}
 
-	public void drawImage(ImageWrapper imageWrapper, int x, int y) {
-		canvas.drawBitmap((Bitmap) imageWrapper.getRawImage(), (float) x, (float) y, null);
+	public void drawImage(ImageWrapper imageWrapper, int x, int y)
+	{
+		canvas.drawBitmap((Bitmap) imageWrapper.getRawImage(), (float) x,
+				(float) y, null);
 	}
 
-	public void drawText(String text, int x, int y) {
+	public void drawText(String text, int x, int y)
+	{
 		canvas.drawText(text, x, y, paint);
 	}
 
-	public void scale(double sx, double sy) {
+	public void scale(double sx, double sy)
+	{
 		canvas.scale((float) sx, (float) sy);
 	}
 
-	public void setColor(ColorWrapper color) {
+	public void setColor(ColorWrapper color)
+	{
 		paint.setColor((Integer) color.getNativeObject());
 	}
 
-	public void fillDiamond(DiamondWrapper diamond) {
+	public void fillDiamond(DiamondWrapper diamond)
+	{
 		paint.setStyle(Paint.Style.FILL);
 		canvas.drawPath((Path) diamond.getNativeObject(), paint);
 		paint.setStyle(Paint.Style.STROKE);

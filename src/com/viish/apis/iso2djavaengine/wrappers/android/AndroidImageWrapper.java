@@ -25,27 +25,32 @@ import android.graphics.Bitmap;
 import com.viish.apis.iso2djavaengine.wrappers.ColorWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
 
-public class AndroidImageWrapper implements ImageWrapper {
+public class AndroidImageWrapper implements ImageWrapper
+{
 
-	private Bitmap image;
+	private Bitmap	image;
 
-	public AndroidImageWrapper(Bitmap img) {
+	public AndroidImageWrapper(Bitmap img)
+	{
 		image = img;
 	}
 
-	public Image getRawImage() {
+	public Image getRawImage()
+	{
 		return null;
 	}
 
-	public int getWidth() {
+	public int getWidth()
+	{
 		return image.getWidth();
 	}
 
-	public int getHeight() {
+	public int getHeight()
+	{
 		return image.getHeight();
 	}
 
-	//TODO
+	// TODO
 	public ImageWrapper getSubImage(int x, int y, int width, int height)
 	{
 		return null;
@@ -53,7 +58,7 @@ public class AndroidImageWrapper implements ImageWrapper {
 
 	public void replaceColorByTransparency(ColorWrapper colorToRemove)
 	{
-		
+
 	}
 
 	public ImageWrapper resize(int width, int height)

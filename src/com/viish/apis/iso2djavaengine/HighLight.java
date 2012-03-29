@@ -56,7 +56,7 @@ public class HighLight
 	{
 		this(enable, WrappersFactory.newColor(255, 255, 0, 255 * 25 / 100));
 	}
-	
+
 	public HighLight(ColorWrapper color)
 	{
 		this(false, color);

@@ -27,12 +27,16 @@ import com.viish.apis.iso2djavaengine.wrappers.awt.AWTDiamondWrapper;
 public class WrappersFactory
 {
 	/**
-	 * @param Xs list of X coordinates of diamond's vertexes
-	 * @param Ys list of Y coordinates of diamond's vertexes
-	 * @param n the number of vertexes
+	 * @param Xs
+	 *            list of X coordinates of diamond's vertexes
+	 * @param Ys
+	 *            list of Y coordinates of diamond's vertexes
+	 * @param n
+	 *            the number of vertexes
 	 * @return a DimondWrapper representing the described diamond
 	 */
-	public static DiamondWrapper newDiamond(int[] Xs, int[] Ys, int n) {
+	public static DiamondWrapper newDiamond(int[] Xs, int[] Ys, int n)
+	{
 		switch (Map.WRAPPER)
 		{
 			case AWT:
@@ -43,16 +47,22 @@ public class WrappersFactory
 				return null;
 		}
 	}
-	
+
 	/**
 	 * 
-	 * @param r the red value, between 0 and 255
-	 * @param g the green value, between 0 and 255
-	 * @param b the blue value, between 0 and 255
-	 * @param a the alpha value, in percentage, between 0 and 100, the lower the more transparent
+	 * @param r
+	 *            the red value, between 0 and 255
+	 * @param g
+	 *            the green value, between 0 and 255
+	 * @param b
+	 *            the blue value, between 0 and 255
+	 * @param a
+	 *            the alpha value, in percentage, between 0 and 100, the lower
+	 *            the more transparent
 	 * @return a ColorWrapper object representing this color
 	 */
-	public static ColorWrapper newColor(int r, int g, int b, int a) {
+	public static ColorWrapper newColor(int r, int g, int b, int a)
+	{
 		switch (Map.WRAPPER)
 		{
 			case AWT:

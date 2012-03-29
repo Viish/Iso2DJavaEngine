@@ -51,12 +51,14 @@ public class AWTGraphicsWrapper implements GraphicsWrapper
 	{
 		graphics.drawString(text, x, y);
 	}
-	
-	public void fillDiamond(DiamondWrapper diamond) {
+
+	public void fillDiamond(DiamondWrapper diamond)
+	{
 		graphics.fillPolygon((Polygon) diamond.getNativeObject());
 	}
 
-	public void setColor(ColorWrapper color) {
+	public void setColor(ColorWrapper color)
+	{
 		graphics.setColor((Color) color.getNativeObject());
 	}
 }

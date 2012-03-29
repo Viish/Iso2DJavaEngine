@@ -18,7 +18,10 @@
 
 package com.viish.apis.iso2djavaengine.wrappers;
 
-public interface ColorWrapper 
+public interface ColorWrapper
 {
+	/**
+	 * @return the real object, depending the technology
+	 */
 	public Object getNativeObject();
 }

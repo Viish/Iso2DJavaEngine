@@ -20,7 +20,13 @@ package com.viish.apis.iso2djavaengine.wrappers;
 
 public interface DiamondWrapper
 {
+	/**
+	 * @return true if the point x,y is inside the diamond, else return false
+	 */
 	public boolean contains(int x, int y);
-	
+
+	/**
+	 * @return the real object, depending the technology
+	 */
 	public Object getNativeObject();
 }

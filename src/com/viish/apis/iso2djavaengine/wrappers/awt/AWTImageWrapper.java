@@ -67,7 +67,7 @@ public class AWTImageWrapper implements ImageWrapper
 		int height = getHeight();
 		int[] rgbs = new int[width * height];
 		image.getRGB(0, 0, width, height, rgbs, 0, width);
-		
+
 		for (int i = 0; i < width; i++)
 		{
 			for (int j = 0; j < height; j++)

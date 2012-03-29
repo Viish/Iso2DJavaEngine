@@ -21,14 +21,17 @@ package com.viish.apis.iso2djavaengine.wrappers.android;
 import android.graphics.Color;
 import com.viish.apis.iso2djavaengine.wrappers.ColorWrapper;
 
-public class AndroidColorWrapper implements ColorWrapper {
-	public int color;
-	
-	public AndroidColorWrapper(int r, int g, int b, int a) {
+public class AndroidColorWrapper implements ColorWrapper
+{
+	public int	color;
+
+	public AndroidColorWrapper(int r, int g, int b, int a)
+	{
 		color = Color.argb(r, g, b, 255 * a / 100);
 	}
-	
-	public Object getNativeObject() {
+
+	public Object getNativeObject()
+	{
 		return color;
 	}
 }

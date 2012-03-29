@@ -189,11 +189,12 @@ public class Map
 	{
 		highlight[i][j] = new HighLight(hightlight);
 	}
-	
+
 	/**
 	 * Highlight the cell Sprite at Map coordinates i, j
 	 */
-	public void setHighlightedSprite(int i, int j, boolean hightlight, ColorWrapper color)
+	public void setHighlightedSprite(int i, int j, boolean hightlight,
+			ColorWrapper color)
 	{
 		highlight[i][j] = new HighLight(hightlight, color);
 	}
@@ -334,6 +335,9 @@ public class Map
 		return diamondW.contains(x, y);
 	}
 
+	/**
+	 * Move a character from it's actual position to the ones supplied
+	 */
 	public void moveCharacter(int fromX, int fromY, int[] toXs, int[] toYs)
 	{
 		Sprite sprite = getSprite("Characters", fromX, fromY);
@@ -346,11 +350,12 @@ public class Map
 		lastY = fromY;
 
 		walkingPath = new ArrayList<Point>();
-		addToPath(walkingSprite, fromX, fromY, toXs[0], toYs[0]);
+		addToPath(walkingPath, walkingSprite, fromX, fromY, toXs[0], toYs[0]);
 
 		for (int i = 1; i < toXs.length; i++)
 		{
-			addToPath(walkingSprite, toXs[i - 1], toYs[i - 1], toXs[i], toYs[i]);
+			addToPath(walkingPath, walkingSprite, toXs[i - 1], toYs[i - 1],
+					toXs[i], toYs[i]);
 		}
 
 		sprite.setCurrentAnimation(AnimationType.WALK);
@@ -358,27 +363,50 @@ public class Map
 	}
 
 	/**
+	 * @return the list of points the character will walk on if we ask it for
+	 *         this movement
+	 */
+	public List<Point> simuleCharacterMovement(int fromX, int fromY,
+			int[] toXs, int[] toYs)
+	{
+		Sprite sprite = getSprite("Characters", fromX, fromY);
+
+		if (toXs.length != toYs.length || sprite == null)
+			return null;
+
+		List<Point> simuledPath = new ArrayList<Point>();
+		addToPath(simuledPath, sprite, fromX, fromY, toXs[0], toYs[0]);
+
+		for (int i = 1; i < toXs.length; i++)
+		{
+			addToPath(simuledPath, sprite, toXs[i - 1], toYs[i - 1], toXs[i],
+					toYs[i]);
+		}
+
+		return simuledPath;
+	}
+
+	/**
 	 * Move a Character's Sprites from a point to another (only in direct line
 	 * for now)
 	 */
-	private void addToPath(Sprite sprite, int fromX, int fromY, int toX, int toY)
+	private List<Point> addToPath(List<Point> path, Sprite sprite, int fromX,
+			int fromY, int toX, int toY)
 	{
 		if (fromX == toX)
 		{
 			if (fromY < toY)
 			{
-				sprite.setOrientation(Orientation.NORTH_EAST);
 				for (int i = fromY + 1; i <= toY; i += 1)
 				{
-					walkingPath.add(new Point(fromX, i));
+					path.add(new Point(fromX, i));
 				}
 			}
 			else
 			{
-				sprite.setOrientation(Orientation.SOUTH_WEST);
 				for (int i = fromY - 1; i >= toY; i -= 1)
 				{
-					walkingPath.add(new Point(fromX, i));
+					path.add(new Point(fromX, i));
 				}
 			}
 		}
@@ -386,21 +414,21 @@ public class Map
 		{
 			if (fromX < toX)
 			{
-				sprite.setOrientation(Orientation.SOUTH_EAST);
 				for (int i = fromX + 1; i <= toX; i += 1)
 				{
-					walkingPath.add(new Point(i, fromY));
+					path.add(new Point(i, fromY));
 				}
 			}
 			else
 			{
-				sprite.setOrientation(Orientation.NORTH_WEST);
 				for (int i = fromX - 1; i >= toX; i -= 1)
 				{
-					walkingPath.add(new Point(i, fromY));
+					path.add(new Point(i, fromY));
 				}
 			}
 		}
+
+		return path;
 	}
 
 	/**
@@ -464,11 +492,13 @@ public class Map
 	{
 		int backupX = -1, backupY = -1;
 		Sprite localBackupSprite = null;
-		if (backupSprite != null) {
-			backupX = lastX; backupY = lastY;
+		if (backupSprite != null)
+		{
+			backupX = lastX;
+			backupY = lastY;
 			localBackupSprite = backupSprite;
 		}
-		
+
 		if (isWalking)
 		{
 			Iterator<Point> it = walkingPath.iterator();
@@ -512,7 +542,7 @@ public class Map
 				walkingPath = null;
 			}
 		}
-		
+
 		if (localBackupSprite != null && backupX != -1 && backupY != -1)
 		{
 			setCharacterSprite(backupX, backupY, localBackupSprite);

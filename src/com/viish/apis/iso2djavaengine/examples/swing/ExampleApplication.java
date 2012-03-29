@@ -18,17 +18,11 @@
 
 package com.viish.apis.iso2djavaengine.examples.swing;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class ExampleApplication
@@ -40,27 +34,10 @@ public class ExampleApplication
 		final JFrame window = new JFrame();
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setSize(900, 510);
-		JPanel pane = new JPanel();
 		try
 		{
 			monPanel = new ExamplePanel();
-			JButton rotate = new JButton("Rotate Orc");
-			rotate.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					monPanel.orc.rotate();
-				}
-			});
-			pane.setLayout(new BorderLayout());
-			pane.add(monPanel, BorderLayout.CENTER);
-			JComponent controls = new JPanel();
-			BorderLayout controlsLayout = new BorderLayout();
-			controls.setLayout(controlsLayout);
-			controls.add(rotate, BorderLayout.EAST);
-			pane.add(controls, BorderLayout.SOUTH);
-
-			window.setContentPane(pane);
+			window.setContentPane(monPanel);
 			window.setTitle("Move my Orc ! (Highligth colors are random)");
 		}
 		catch (IOException e)
@@ -68,7 +45,7 @@ public class ExampleApplication
 			e.printStackTrace();
 		}
 		window.setVisible(true);
-		
+
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask()
 		{

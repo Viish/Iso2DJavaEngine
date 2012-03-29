@@ -22,7 +22,8 @@ import android.graphics.Path;
 
 import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
 
-public class AndroidDiamondWrapper implements DiamondWrapper {
+public class AndroidDiamondWrapper implements DiamondWrapper
+{
 	private Path	diamond;
 
 	public AndroidDiamondWrapper(int[] Xs, int[] Ys, int n)
@@ -41,11 +42,12 @@ public class AndroidDiamondWrapper implements DiamondWrapper {
 
 	public boolean contains(int x, int y)
 	{
-		//TODO
+		// TODO
 		return false;
 	}
-	
-	public Object getNativeObject() {
+
+	public Object getNativeObject()
+	{
 		return diamond;
 	}
 }

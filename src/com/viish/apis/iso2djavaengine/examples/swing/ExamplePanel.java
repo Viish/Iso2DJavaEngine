@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import com.viish.apis.iso2djavaengine.AnimationType;
 import com.viish.apis.iso2djavaengine.Map;
 import com.viish.apis.iso2djavaengine.Orientation;
+import com.viish.apis.iso2djavaengine.Point;
 import com.viish.apis.iso2djavaengine.Sprite;
 import com.viish.apis.iso2djavaengine.SpriteType;
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
@@ -89,10 +90,6 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 		int moveSpeed = 7;
 		int x = s.getX();
 		int y = s.getY();
-		Random random = new Random();
-		int r = random.nextInt(256);
-		int g = random.nextInt(256);
-		int b = random.nextInt(256);
 		for (int i = -moveSpeed; i <= moveSpeed; i++)
 		{
 			for (int j = -moveSpeed; j <= moveSpeed; j++)
@@ -101,7 +98,7 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 						&& ((j + y) >= 0 && (j + y) < sizeY)
 						&& (Math.abs(i) + Math.abs(j) <= moveSpeed))
 					map.setHighlightedSprite(x + i, y + j, true,
-							WrappersFactory.newColor(r, g, b, 25));
+							WrappersFactory.newColor(255, 255, 0, 25));
 			}
 
 		}
@@ -129,16 +126,86 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 
 	public void mouseDragged(MouseEvent me)
 	{
-		offsetX += tempX - me.getX();
-		offsetY += tempY - me.getY();
-		tempX = me.getX();
-		tempY = me.getY();
+		if (map.getHighestSpriteAt(me.getX(), me.getY()) == null
+				&& currentSelected == null)
+		{
+			offsetX += tempX - me.getX();
+			offsetY += tempY - me.getY();
+			tempX = me.getX();
+			tempY = me.getY();
+		}
+		else if (currentSelected != null)
+		{
+			Sprite cell = map.getHighestSpriteAt(me.getX(), me.getY());
+			if (cell == null)
+				return;
+
+			List<Point> path;
+
+			if (currentSelected.getX() + cell.getX() < currentSelected.getY()
+					+ cell.getY())
+			{
+				path = map.simuleCharacterMovement(currentSelected.getX(),
+						currentSelected.getY(),
+						new int[] { currentSelected.getX(), cell.getX() },
+						new int[] { cell.getY(), cell.getY() });
+			}
+			else
+			{
+				path = map.simuleCharacterMovement(currentSelected.getX(),
+						currentSelected.getY(),
+						new int[] { cell.getX(), cell.getX() }, new int[] {
+								currentSelected.getY(), cell.getY() });
+			}
+
+			if (path.size() > 0)
+			{
+				Point p0 = path.get(0);
+				if (p0.getX() == currentSelected.getX())
+				{
+					if (p0.getY() > currentSelected.getY())
+					{
+						currentSelected.setOrientation(Orientation.NORTH_EAST);
+					}
+					else
+					{
+						currentSelected.setOrientation(Orientation.SOUTH_WEST);
+					}
+				}
+				else
+				{
+					if (p0.getX() > currentSelected.getX())
+					{
+						currentSelected.setOrientation(Orientation.SOUTH_EAST);
+					}
+					else
+					{
+						currentSelected.setOrientation(Orientation.NORTH_WEST);
+					}
+				}
+			}
+
+			map.resetAllHighlight();
+			showAvailableMovements(currentSelected);
+			for (Point p : path)
+			{
+				map.setHighlightedSprite(p.getX(), p.getY(), true,
+						WrappersFactory.newColor(255, 0, 0, 25));
+			}
+		}
 	}
 
 	public void mousePressed(MouseEvent e)
 	{
-		tempX = e.getX();
-		tempY = e.getY();
+		if (map.getHighestSpriteAt(e.getX(), e.getY()) == null)
+		{
+			tempX = e.getX();
+			tempY = e.getY();
+		}
+		else
+		{
+			mouseClicked(e);
+		}
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e)
@@ -158,7 +225,10 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 	{
 		Sprite s = map.getHighestSpriteAt(e.getX(), e.getY());
 		if (s == null)
+		{
+			map.resetAllHighlight();
 			return;
+		}
 
 		if (s.getType() == SpriteType.CHARACTER)
 		{
@@ -168,7 +238,9 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 				{
 					currentSelected = null;
 					map.resetAllHighlight();
-				} else {
+				}
+				else
+				{
 					currentSelected = s;
 					map.resetAllHighlight();
 					showAvailableMovements(s);
@@ -232,6 +304,6 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 
 	public void mouseReleased(MouseEvent e)
 	{
-
+		mouseClicked(e);
 	}
 }
