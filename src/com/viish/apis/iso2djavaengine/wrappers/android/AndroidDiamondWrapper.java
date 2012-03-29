@@ -18,21 +18,30 @@
 
 package com.viish.apis.iso2djavaengine.wrappers.android;
 
-import android.graphics.drawable.shapes.PathShape;
+import android.graphics.Path;
 
 import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
 
-//TODO
 public class AndroidDiamondWrapper implements DiamondWrapper {
-	private PathShape	diamond;
+	private Path	diamond;
 
 	public AndroidDiamondWrapper(int[] Xs, int[] Ys, int n)
 	{
-		diamond = null;
+		diamond = new Path();
+		diamond.moveTo(Xs[0], Ys[0]);
+		for (int i = 1; i < n; i++)
+		{
+			for (int j = 1; j < n; j++)
+			{
+				diamond.lineTo(Xs[i], Ys[i]);
+			}
+		}
+		diamond.lineTo(Xs[0], Ys[0]);
 	}
 
 	public boolean contains(int x, int y)
 	{
+		//TODO
 		return false;
 	}
 	

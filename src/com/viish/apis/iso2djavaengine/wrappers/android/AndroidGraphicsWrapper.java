@@ -21,6 +21,7 @@ package com.viish.apis.iso2djavaengine.wrappers.android;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 
 import com.viish.apis.iso2djavaengine.wrappers.ColorWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.DiamondWrapper;
@@ -55,7 +56,9 @@ public class AndroidGraphicsWrapper implements GraphicsWrapper {
 	}
 
 	public void fillDiamond(DiamondWrapper diamond) {
-		//TODO
+		paint.setStyle(Paint.Style.FILL);
+		canvas.drawPath((Path) diamond.getNativeObject(), paint);
+		paint.setStyle(Paint.Style.STROKE);
 	}
 
 }
