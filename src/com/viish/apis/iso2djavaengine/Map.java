@@ -41,7 +41,7 @@ public class Map
 	private int				sizeX, sizeY;
 	private int				lastX, lastY;
 	private int				offsetX, offsetY;
-	private Sprite			walkingSprite;
+	private Sprite			walkingSprite, backupSprite;
 	boolean					isWalking	= false;
 	private List<Layout>	layouts;
 	private double			zoom		= 1.0;
@@ -162,7 +162,8 @@ public class Map
 	 */
 	public void zoomOut()
 	{
-		zoom -= 0.2;
+		if (zoom - 0.2 > 0)
+			zoom -= 0.2;
 	}
 
 	/**
@@ -461,6 +462,13 @@ public class Map
 	 */
 	private void moveCharacterSpriteIfNeeded()
 	{
+		int backupX = -1, backupY = -1;
+		Sprite localBackupSprite = null;
+		if (backupSprite != null) {
+			backupX = lastX; backupY = lastY;
+			localBackupSprite = backupSprite;
+		}
+		
 		if (isWalking)
 		{
 			Iterator<Point> it = walkingPath.iterator();
@@ -476,6 +484,7 @@ public class Map
 					else
 						walkingSprite.setOrientation(Orientation.SOUTH_WEST);
 
+					backupSprite = getCharacterSprite(nextX, nextY);
 					setCharacterSprite(nextX, nextY, walkingSprite);
 					walkingSprite.setXY(nextX, nextY);
 					setCharacterSprite(nextX, lastY, null);
@@ -488,6 +497,7 @@ public class Map
 					else
 						walkingSprite.setOrientation(Orientation.NORTH_WEST);
 
+					backupSprite = getCharacterSprite(nextX, nextY);
 					setCharacterSprite(nextX, nextY, walkingSprite);
 					walkingSprite.setXY(nextX, nextY);
 					setCharacterSprite(lastX, nextY, null);
@@ -501,6 +511,11 @@ public class Map
 				isWalking = false;
 				walkingPath = null;
 			}
+		}
+		
+		if (localBackupSprite != null && backupX != -1 && backupY != -1)
+		{
+			setCharacterSprite(backupX, backupY, localBackupSprite);
 		}
 	}
 

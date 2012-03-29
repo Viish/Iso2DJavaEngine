@@ -23,9 +23,29 @@ package com.viish.apis.iso2djavaengine.wrappers;
 
 public interface GraphicsWrapper
 {
+	/**
+	 * Draw an image at screen coordinates x,y
+	 */
 	public void drawImage(ImageWrapper imageWrapper, int x, int y);
+	
+	/**
+	 * Draw a string at screen coordinates x,y
+	 */
 	public void drawText(String text, int x, int y);
+	
+	/**
+	 * Scale the map by sx,sy factor
+	 */
 	public void scale(double sx, double sy);
+	
+	
+	/**
+	 * Set the color the map will use to draw
+	 */
 	public void setColor(ColorWrapper color);
+	
+	/**
+	 * Draw a diamond shape, filled using the current color
+	 */
 	public void fillDiamond(DiamondWrapper diamond);
 }

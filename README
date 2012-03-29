@@ -1,5 +1,5 @@
-Version : 0.2.1
-Date : 2012-03-28
+Version : 0.3.0_SNAPSHOT
+Date : 2012-03-29
 Author : Sylvain "Viish" Berfini
 License : GPL v3
 Repository = https://github.com/Viish/Iso2DJavaEngine
@@ -27,9 +27,12 @@ Repository = https://github.com/Viish/Iso2DJavaEngine
 * Be able to move a character following a path
 * Highlight color can be chose
 
+0.3.0_SNAPSHOT FEATURES (2012-03-29) :
+* Bugfix for invisible Sprites if one was walking through another one
+* Read Sprites from one file (see ExampleSpriteSkeleton)
+
 TODO List :
-* 3D maps
-* Read Sprites from file
-* Better Sprites' animations management
 * Be able to rotate the map
+* 3D maps
 * Better use of 3D isometrics Sprites
+* Better Sprites' animations management
