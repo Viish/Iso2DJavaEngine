@@ -28,16 +28,18 @@ import com.viish.apis.iso2djavaengine.wrappers.awt.AWTGraphicsWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.awt.AWTImageWrapper;
 
 public class ExamplePanel extends JPanel implements MouseMotionListener,
-		MouseListener, MouseWheelListener {
-	private static final long serialVersionUID = 1L;
-	private Map map;
-	private int offsetX = 0, offsetY = 0;
-	private int tempX, tempY;
-	public Sprite orc;
-	private int sizeX = 9;
-	private int sizeY = 13;
+		MouseListener, MouseWheelListener
+{
+	private static final long	serialVersionUID	= 1L;
+	private Map					map;
+	private int					offsetX				= 0, offsetY = 0;
+	private int					tempX, tempY;
+	public Sprite				orc, skeleton, currentSelected;
+	private int					sizeX				= 9;
+	private int					sizeY				= 13;
 
-	public ExamplePanel() throws IOException {
+	public ExamplePanel() throws IOException
+	{
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
@@ -60,10 +62,14 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 
 		orc = new ExampleSpriteOrc(this.getClass(), "/images/Orc/");
 		map.setCharacterSprite(4, 4, orc);
+		skeleton = new ExampleSpriteSkeleton(this.getClass(), "/images/");
+		map.setCharacterSprite(8, 8, skeleton);
 
 		Random r = new Random();
-		for (int i = 0; i < sizeX; i++) {
-			for (int j = 0; j < sizeY; j++) {
+		for (int i = 0; i < sizeX; i++)
+		{
+			for (int j = 0; j < sizeY; j++)
+			{
 				Sprite cell = new Sprite(SpriteType.CELL);
 				List<ImageWrapper> anim = new ArrayList<ImageWrapper>();
 
@@ -78,7 +84,8 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 		}
 	}
 
-	private void showAvailableMovements(Sprite s) {
+	private void showAvailableMovements(Sprite s)
+	{
 		int moveSpeed = 7;
 		int x = s.getX();
 		int y = s.getY();
@@ -86,8 +93,10 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 		int r = random.nextInt(256);
 		int g = random.nextInt(256);
 		int b = random.nextInt(256);
-		for (int i = -moveSpeed; i <= moveSpeed; i++) {
-			for (int j = -moveSpeed; j <= moveSpeed; j++) {
+		for (int i = -moveSpeed; i <= moveSpeed; i++)
+		{
+			for (int j = -moveSpeed; j <= moveSpeed; j++)
+			{
 				if (((x + i) >= 0 && (x + i) < sizeX)
 						&& ((j + y) >= 0 && (j + y) < sizeY)
 						&& (Math.abs(i) + Math.abs(j) <= moveSpeed))
@@ -98,7 +107,8 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 		}
 	}
 
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(Graphics g)
+	{
 		super.paintComponent(g);
 
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -107,76 +117,121 @@ public class ExamplePanel extends JPanel implements MouseMotionListener,
 		map.refresh(new AWTGraphicsWrapper((Graphics2D) g), offsetX, offsetY);
 	}
 
-	public int getMapWidth() {
+	public int getMapWidth()
+	{
 		return map.getWidth();
 	}
 
-	public int getMapHeight() {
+	public int getMapHeight()
+	{
 		return map.getHeight();
 	}
 
-	public void mouseDragged(MouseEvent me) {
+	public void mouseDragged(MouseEvent me)
+	{
 		offsetX += tempX - me.getX();
 		offsetY += tempY - me.getY();
 		tempX = me.getX();
 		tempY = me.getY();
 	}
 
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e)
+	{
 		tempX = e.getX();
 		tempY = e.getY();
 	}
 
-	public void mouseWheelMoved(MouseWheelEvent e) {
+	public void mouseWheelMoved(MouseWheelEvent e)
+	{
 		if (e.getWheelRotation() > 0)
 			map.zoomOut();
 		else
 			map.zoomIn();
 	}
 
-	public void mouseMoved(MouseEvent me) {
+	public void mouseMoved(MouseEvent me)
+	{
 
 	}
 
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked(MouseEvent e)
+	{
 		Sprite s = map.getHighestSpriteAt(e.getX(), e.getY());
 		if (s == null)
 			return;
 
-		if (s.getType() == SpriteType.CHARACTER) {
-			if (!map.isCellHighlighted(s.getX(), s.getY())) {
-				showAvailableMovements(s);
-			}
-		} else if (s.getType() == SpriteType.CELL) {
-			if (map.isCellHighlighted(s.getX(), s.getY())) {
-				map.resetAllHighlight();
-				if (s.getX() == orc.getX() || s.getY() == orc.getY()) {
-					map.moveCharacter(orc.getX(), orc.getY(),
-							new int[] { s.getX() }, new int[] { s.getY() });
+		if (s.getType() == SpriteType.CHARACTER)
+		{
+			if (currentSelected != null)
+			{
+				if (currentSelected.equals(s))
+				{
+					currentSelected = null;
+					map.resetAllHighlight();
 				} else {
-					if (orc.getX() + s.getX() < orc.getY() + s.getY()) {
-						map.moveCharacter(orc.getX(), orc.getY(), new int[] {
-								orc.getX(), s.getX() },
+					currentSelected = s;
+					map.resetAllHighlight();
+					showAvailableMovements(s);
+				}
+			}
+			else
+			{
+				currentSelected = s;
+				if (!map.isCellHighlighted(s.getX(), s.getY()))
+				{
+					showAvailableMovements(s);
+				}
+			}
+		}
+		else if (s.getType() == SpriteType.CELL)
+		{
+			if (map.isCellHighlighted(s.getX(), s.getY()))
+			{
+				map.resetAllHighlight();
+				if (s.getX() == currentSelected.getX()
+						|| s.getY() == currentSelected.getY())
+				{
+					map.moveCharacter(currentSelected.getX(),
+							currentSelected.getY(), new int[] { s.getX() },
+							new int[] { s.getY() });
+					currentSelected = null;
+				}
+				else
+				{
+					if (currentSelected.getX() + s.getX() < currentSelected
+							.getY() + s.getY())
+					{
+						map.moveCharacter(currentSelected.getX(),
+								currentSelected.getY(), new int[] {
+										currentSelected.getX(), s.getX() },
 								new int[] { s.getY(), s.getY() });
-					} else {
-						map.moveCharacter(orc.getX(), orc.getY(),
+						currentSelected = null;
+					}
+					else
+					{
+						map.moveCharacter(currentSelected.getX(),
+								currentSelected.getY(),
 								new int[] { s.getX(), s.getX() }, new int[] {
-										orc.getY(), s.getY() });
+										currentSelected.getY(), s.getY() });
+						currentSelected = null;
 					}
 				}
 			}
 		}
 	}
 
-	public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(MouseEvent e)
+	{
 
 	}
 
-	public void mouseExited(MouseEvent e) {
+	public void mouseExited(MouseEvent e)
+	{
 
 	}
 
-	public void mouseReleased(MouseEvent e) {
+	public void mouseReleased(MouseEvent e)
+	{
 
 	}
 }

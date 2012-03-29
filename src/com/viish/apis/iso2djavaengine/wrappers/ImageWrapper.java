@@ -21,9 +21,33 @@ package com.viish.apis.iso2djavaengine.wrappers;
 
 public interface ImageWrapper
 {
+	/**
+	 * @return the real object, depending the technology
+	 */
 	public Object getRawImage();
 
+	/**
+	 * @return the width of the image, in pixels
+	 */
 	public int getWidth();
 
+	/**
+	 * @return the height of the image, in pixels
+	 */
 	public int getHeight();
+	
+	/**
+	 * @return a new ImageWrapper, created using a piece of the one calling this method
+	 */
+	public ImageWrapper getSubImage(int x, int y, int width, int height);
+	
+	/**
+	 * Set the transparency to 100% to all pixels with the given color
+	 */
+	public void replaceColorByTransparency(ColorWrapper colorToRemove);
+	
+	/**
+	 * @return a new ImageWrapper, copy of the original but with different dimensions
+	 */
+	public ImageWrapper resize(int width, int height);
 }
