@@ -35,8 +35,6 @@ public class Map
 	private Layout			map;
 	private Layout			characters;
 	private HighLight[][]	highlight;
-	private int				width		= -1, height = -1;
-	private int				minW, maxW, minH, maxH;
 	private List<Point>		walkingPath;
 	private int				sizeX, sizeY;
 	private int				lastX, lastY;
@@ -171,7 +169,10 @@ public class Map
 	 */
 	public int getWidth()
 	{
-		return width;
+		Sprite aCell = getMapSprite(0, 0);
+		int minX = calculatePositionX(0, 0, aCell.getWidth());
+		int maxX = calculatePositionX(sizeX - 1, sizeY - 1, aCell.getWidth());
+		return maxX - minX + aCell.getWidth();
 	}
 
 	/**
@@ -179,7 +180,10 @@ public class Map
 	 */
 	public int getHeight()
 	{
-		return height;
+		Sprite aCell = getMapSprite(0, 0);
+		int minY = calculatePositionX(0, sizeY - 1, aCell.getWidth());
+		int maxY = calculatePositionX(sizeX - 1, 0, aCell.getWidth());
+		return maxY - minY + aCell.getWidth();
 	}
 
 	/**
@@ -455,13 +459,6 @@ public class Map
 					}
 				}
 
-				if (height == -1 || width == -1)
-				{
-					Sprite aCell = getMapSprite(0, 0);
-					width = maxW - minW + aCell.getWidth();
-					height = maxH - minH + aCell.getHeight();
-				}
-
 				moveCharacterSpriteIfNeeded();
 
 				for (int j = sizeY - 1; j >= 0; j--)
@@ -592,14 +589,6 @@ public class Map
 	{
 		int x = calculatePositionX(i, j, img.getWidth());
 		int y = calculatePositionY(i, j, img.getHeight());
-
-		if (width == -1 || height == -1)
-		{
-			minW = (x < minW ? x : minW);
-			maxW = (x > maxW ? x : maxW);
-			minH = (x < minH ? x : minH);
-			maxH = (x > maxH ? x : maxH);
-		}
 
 		g2d.drawImage(img.getNextAnimationImage(), x, y);
 

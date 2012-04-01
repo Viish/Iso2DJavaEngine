@@ -18,9 +18,8 @@
 
 package com.viish.apis.iso2djavaengine.wrappers.android;
 
-import java.awt.Image;
-
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 
 import com.viish.apis.iso2djavaengine.wrappers.ColorWrapper;
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
@@ -35,9 +34,9 @@ public class AndroidImageWrapper implements ImageWrapper
 		image = img;
 	}
 
-	public Image getRawImage()
+	public Object getRawImage()
 	{
-		return null;
+		return image;
 	}
 
 	public int getWidth()
@@ -50,19 +49,42 @@ public class AndroidImageWrapper implements ImageWrapper
 		return image.getHeight();
 	}
 
-	// TODO
 	public ImageWrapper getSubImage(int x, int y, int width, int height)
 	{
-		return null;
+		Bitmap cropedBitmap = Bitmap.createBitmap(image, x, y, width, height);
+		return new AndroidImageWrapper(cropedBitmap);
 	}
 
 	public void replaceColorByTransparency(ColorWrapper colorToRemove)
 	{
+		int color = (Integer) colorToRemove.getNativeObject();
+		int width = getWidth();
+		int height = getHeight();
 
+		for (int i = 0; i < width; i++)
+		{
+			for (int j = 0; j < height; j++)
+			{
+				int rgb = image.getPixel(i, j);
+				if (rgb == color) {
+					image.setPixel(i, j, 255 << 24);
+				}
+			}
+		}
 	}
 
-	public ImageWrapper resize(int width, int height)
+	public ImageWrapper resize(int newWidth, int newHeight)
 	{
-		return null;
+		int width = getWidth();
+		int height = getHeight();
+		
+		float scaleWidth = ((float) newWidth) / width;
+		float scaleHeight = ((float) newHeight) / height;
+		
+		Matrix matrix = new Matrix();
+		matrix.postScale(scaleWidth, scaleHeight);
+		
+		Bitmap resizedBitmap = Bitmap.createBitmap(image, 0, 0, width, height, matrix, false);
+		return new AndroidImageWrapper(resizedBitmap);
 	}
 }

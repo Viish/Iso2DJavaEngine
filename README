@@ -31,8 +31,10 @@ Repository = https://github.com/Viish/Iso2DJavaEngine
 * Bugfix for invisible Sprites if one was walking through another one
 * Read Sprites from one file (see ExampleSpriteSkeleton)
 * Characters paths can be simulated to highlight them before they are realized.
+* Android wrappers
 
 TODO List :
+* Draw user defined layouts
 * Be able to rotate the map
 * 3D maps
 * Better use of 3D isometrics Sprites
