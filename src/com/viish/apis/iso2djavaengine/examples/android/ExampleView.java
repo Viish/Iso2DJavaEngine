@@ -180,8 +180,7 @@ public class ExampleView extends View implements OnTouchListener {
 	
 	private void drag(int x, int y)
 	{
-		if (map.getHighestSpriteAt(x, y) == null
-				&& currentSelected == null && tempX != -1 && tempY != -1)
+		if (currentSelected == null && tempX != -1 && tempY != -1)
 		{
 			offsetX += tempX - x;
 			offsetY += tempY - y;
@@ -252,11 +251,21 @@ public class ExampleView extends View implements OnTouchListener {
 			}
 		}
 	}
+	
+	public void zoomIn()
+	{
+		map.zoomIn();
+	}
+
+	public void zoomOut()
+	{
+		map.zoomOut();
+	}
 
 	public boolean onTouch(View v, MotionEvent e) {
 
 		if (e.getAction() == MotionEvent.ACTION_DOWN) {
-			if (map.getHighestSpriteAt((int) e.getX(), (int) e.getY()) == null)
+			if (map.getHighestSpriteAt((int) e.getX(), (int) e.getY()) == null || map.getHighestSpriteAt((int) e.getX(), (int) e.getY()).getType() != SpriteType.CHARACTER)
 			{
 				tempX = (int) e.getX();
 				tempY = (int) e.getY();
