@@ -27,7 +27,7 @@ public class AndroidColorWrapper implements ColorWrapper
 
 	public AndroidColorWrapper(int r, int g, int b, int a)
 	{
-		color = Color.argb(r, g, b, 255 * a / 100);
+		color = Color.argb(255 * a / 100, r, g, b);
 	}
 
 	public Object getNativeObject()
