@@ -53,10 +53,10 @@ public class AndroidDiamondWrapper implements DiamondWrapper
 		{
 			int pX = xPoints[i];
 			int pY = yPoints[i];
-			minX = (pX < minX || minX == null ? pX : minX);
-			maxX = (pX > maxX || maxX == null ? pX : maxX);
-			minY = (pY < minY || minY == null ? pY : minY);
-			maxY = (pY > maxY || maxY == null ? pY : maxY);
+			minX = ((minX == null || pX < minX) ? pX : minX);
+			maxX = ((maxX == null || pX > maxX) ? pX : maxX);
+			minY = ((minY == null || pY < minY) ? pY : minY);
+			maxY = ((maxY == null || pY > maxY) ? pY : maxY);
 		}
 		
 		return (x >= minX && x <= maxX && y >= minY && y <= maxY);
