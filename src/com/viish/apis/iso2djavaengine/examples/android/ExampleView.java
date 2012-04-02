@@ -15,6 +15,7 @@ import android.view.View.OnTouchListener;
 import com.viish.apis.iso2djavaengine.AnimationType;
 import com.viish.apis.iso2djavaengine.Map;
 import com.viish.apis.iso2djavaengine.Orientation;
+import com.viish.apis.iso2djavaengine.Point;
 import com.viish.apis.iso2djavaengine.Sprite;
 import com.viish.apis.iso2djavaengine.SpriteType;
 import com.viish.apis.iso2djavaengine.wrappers.ImageWrapper;
@@ -101,87 +102,174 @@ public class ExampleView extends View implements OnTouchListener {
 
 		map.refresh(new AndroidGraphicsWrapper(canvas), offsetX, offsetY);
 	}
+	
+	private void click(int x, int y) {
+		Sprite s = map.getHighestSpriteAt(x, y);
+		if (s == null)
+		{
+			map.resetAllHighlight();
+			return;
+		}
 
-	public boolean onTouch(View v, MotionEvent e) {
-
-		if (e.getAction() == MotionEvent.ACTION_DOWN) {
-
-		} else if (e.getAction() == MotionEvent.ACTION_UP) {
-			Sprite s = map.getHighestSpriteAt((int) e.getX(), (int) e.getY());
-			if (s == null)
+		if (s.getType() == SpriteType.CHARACTER)
+		{
+			if (currentSelected != null)
 			{
-				map.resetAllHighlight();
-				return true;
-			}
-
-			if (s.getType() == SpriteType.CHARACTER)
-			{
-				if (currentSelected != null)
+				if (currentSelected.equals(s))
 				{
-					if (currentSelected.equals(s))
-					{
-						currentSelected = null;
-						map.resetAllHighlight();
-					}
-					else
-					{
-						currentSelected = s;
-						map.resetAllHighlight();
-						showAvailableMovements(s);
-					}
+					currentSelected = null;
+					map.resetAllHighlight();
 				}
 				else
 				{
 					currentSelected = s;
-					if (!map.isCellHighlighted(s.getX(), s.getY()))
-					{
-						showAvailableMovements(s);
-					}
+					map.resetAllHighlight();
+					showAvailableMovements(s);
 				}
 			}
-			else if (s.getType() == SpriteType.CELL)
+			else
 			{
-				if (map.isCellHighlighted(s.getX(), s.getY()))
+				currentSelected = s;
+				if (!map.isCellHighlighted(s.getX(), s.getY()))
 				{
-					map.resetAllHighlight();
-					if (s.getX() == currentSelected.getX()
-							|| s.getY() == currentSelected.getY())
+					showAvailableMovements(s);
+				}
+			}
+		}
+		else if (s.getType() == SpriteType.CELL)
+		{
+			if (map.isCellHighlighted(s.getX(), s.getY()))
+			{
+				map.resetAllHighlight();
+				if (s.getX() == currentSelected.getX()
+						|| s.getY() == currentSelected.getY())
+				{
+					map.moveCharacter(currentSelected.getX(),
+							currentSelected.getY(), new int[] { s.getX() },
+							new int[] { s.getY() });
+					currentSelected = null;
+				}
+				else
+				{
+					if (currentSelected.getX() + s.getX() < currentSelected
+							.getY() + s.getY())
 					{
 						map.moveCharacter(currentSelected.getX(),
-								currentSelected.getY(), new int[] { s.getX() },
-								new int[] { s.getY() });
+								currentSelected.getY(), new int[] {
+										currentSelected.getX(), s.getX() },
+								new int[] { s.getY(), s.getY() });
 						currentSelected = null;
 					}
 					else
 					{
-						if (currentSelected.getX() + s.getX() < currentSelected
-								.getY() + s.getY())
-						{
-							map.moveCharacter(currentSelected.getX(),
-									currentSelected.getY(), new int[] {
-											currentSelected.getX(), s.getX() },
-									new int[] { s.getY(), s.getY() });
-							currentSelected = null;
-						}
-						else
-						{
-							map.moveCharacter(currentSelected.getX(),
-									currentSelected.getY(),
-									new int[] { s.getX(), s.getX() }, new int[] {
-											currentSelected.getY(), s.getY() });
-							currentSelected = null;
-						}
+						map.moveCharacter(currentSelected.getX(),
+								currentSelected.getY(),
+								new int[] { s.getX(), s.getX() }, new int[] {
+										currentSelected.getY(), s.getY() });
+						currentSelected = null;
+					}
+				}
+			}
+			else
+			{
+				map.resetAllHighlight();
+				currentSelected = null;
+			}
+		}
+	}
+	
+	private void drag(int x, int y)
+	{
+		if (map.getHighestSpriteAt(x, y) == null
+				&& currentSelected == null && tempX != -1 && tempY != -1)
+		{
+			offsetX += tempX - x;
+			offsetY += tempY - y;
+			tempX = x;
+			tempY = y;
+		}
+		else if (currentSelected != null)
+		{
+			Sprite cell = map.getHighestSpriteAt(x, y);
+			if (cell == null
+					|| !map.isCellHighlighted(cell.getX(), cell.getY()))
+			{
+				return;
+			}
+
+			List<Point> path;
+
+			if (currentSelected.getX() + cell.getX() < currentSelected.getY()
+					+ cell.getY())
+			{
+				path = map.simuleCharacterMovement(currentSelected.getX(),
+						currentSelected.getY(),
+						new int[] { currentSelected.getX(), cell.getX() },
+						new int[] { cell.getY(), cell.getY() });
+			}
+			else
+			{
+				path = map.simuleCharacterMovement(currentSelected.getX(),
+						currentSelected.getY(),
+						new int[] { cell.getX(), cell.getX() }, new int[] {
+								currentSelected.getY(), cell.getY() });
+			}
+
+			if (path.size() > 0)
+			{
+				Point p0 = path.get(0);
+				if (p0.getX() == currentSelected.getX())
+				{
+					if (p0.getY() > currentSelected.getY())
+					{
+						currentSelected.setOrientation(Orientation.NORTH_EAST);
+					}
+					else
+					{
+						currentSelected.setOrientation(Orientation.SOUTH_WEST);
 					}
 				}
 				else
 				{
-					map.resetAllHighlight();
-					currentSelected = null;
+					if (p0.getX() > currentSelected.getX())
+					{
+						currentSelected.setOrientation(Orientation.SOUTH_EAST);
+					}
+					else
+					{
+						currentSelected.setOrientation(Orientation.NORTH_WEST);
+					}
 				}
 			}
 
-		} else if (e.getAction() == MotionEvent.ACTION_MOVE) {
+			map.resetAllHighlight();
+			showAvailableMovements(currentSelected);
+			for (Point p : path)
+			{
+				if (map.getCharacterSprite(p.getX(), p.getY()) == null)
+					map.setHighlightedSprite(p.getX(), p.getY(), true,
+							WrappersFactory.newColor(255, 0, 0, 25));
+			}
+		}
+	}
 
+	public boolean onTouch(View v, MotionEvent e) {
+
+		if (e.getAction() == MotionEvent.ACTION_DOWN) {
+			if (map.getHighestSpriteAt((int) e.getX(), (int) e.getY()) == null)
+			{
+				tempX = (int) e.getX();
+				tempY = (int) e.getY();
+			}
+			else
+			{
+				click((int) e.getX(), (int) e.getY());
+			}
+			
+		} else if (e.getAction() == MotionEvent.ACTION_UP) {
+			click((int) e.getX(), (int) e.getY());
+		} else if (e.getAction() == MotionEvent.ACTION_MOVE) {
+			drag((int) e.getX(), (int) e.getY());
 		}
 
 		return true;

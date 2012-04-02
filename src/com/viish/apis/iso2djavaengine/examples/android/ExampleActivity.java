@@ -6,12 +6,14 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.LinearLayout;
 
 public class ExampleActivity extends Activity {
 
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
         
         LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
